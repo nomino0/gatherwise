@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Sidebar</title>
+</head>
+<body>
+<nav class="col-md-2 sticky-top d-none p-3 d-md-block modal-footer sidebar vh-100 d-flex flex-column justify-content-between border-end ">
+    <div>
+
+        <h3 class="text-center  py-4 ">Gatherwise</h3>
+        <p class="pl-2"><small>MENU</small></p>
+        <ul class="nav flex-column gap-2 ">
+            <li class="">
+                <a class="btn text-start w-100" th:classappend="${page == 'dashboard'} ? 'btn-outline-primary' : 'btn-secondary'" th:href="@{/dashboard}">
+                    Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="btn text-start w-100" th:classappend="${page == 'events'} ? 'btn-outline-primary' : 'btn-secondary'" th:href="@{/events}">
+                    Event Management
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="btn text-start w-100" th:classappend="${page == 'event-types'} ? 'btn-outline-primary' : 'btn-secondary'" th:href="@{/event-types}">
+                    Event Type Management
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="btn text-start w-100" th:classappend="${page == 'tickets'} ? 'btn-outline-primary' : 'btn-secondary'" th:href="@{/tickets}">
+                    Ticket Management
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="btn text-start w-100" th:classappend="${page == 'reservations'} ? 'btn-outline-primary' : 'btn-secondary'" th:href="@{/reservations}">
+                    Reservation Management
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="mb-3 pt-5">
+        <form th:action="@{/logout}" method="post" >
+            <input class="btn btn-danger align-content-center" type="submit" value="Logout" />
+        </form>
+    </div>
+</nav>
+</body>
+</html>

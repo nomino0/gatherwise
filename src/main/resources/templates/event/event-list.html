@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Event List</title>
+  <script type="text/javascript">
+    function submitForm() {
+      document.getElementById("filterForm").submit();
+    }
+  </script>
+  <link th:replace="layout/admin-layout::link">
+</head>
+
+<body th:replace="layout/admin-layout::body(title='Event List')">
+<div th:fragment="content">
+  <div class="row mt-3 mb-4">
+    <div class="col-8">
+      <a class="btn btn-primary" th:href="@{/events/create}">Add Event</a>
+    </div>
+    <div class="col-4">
+      <form th:action="@{/events/filter}" method="get" id="filterForm">
+        <div class="form-group">
+          <label for="isPublic"><strong>Public:</strong></label>
+          <select name="isPublic" id="isPublic" class="form-control" onchange="submitForm()">
+            <option value="" th:selected="${isPublic == null}">All</option>
+            <option value="true" th:selected="${isPublic == true}">Yes</option>
+            <option value="false" th:selected="${isPublic == false}">No</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="eventTypeId"><strong>Event Type:</strong></label>
+          <select name="eventTypeId" id="eventTypeId" class="form-control" onchange="submitForm()">
+            <option value="" th:selected="${eventTypeId == null}">All</option>
+            <option th:each="eventType : ${eventTypes}" th:value="${eventType.id}" th:text="${eventType.name}" th:selected="${eventTypeId == eventType.id}"></option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label><strong>Sort by:</strong></label>
+          <label><input type="radio" name="sortBy" value="creationDate" th:checked="${sortBy == 'creationDate'}" onchange="submitForm()"> Creation Date</label>
+          <label><input type="radio" name="sortBy" value="date" th:checked="${sortBy == 'date'}" onchange="submitForm()"> Event Date</label>
+        </div>
+        <div class="form-group">
+          <label><strong>Order:</strong></label>
+          <label><input type="radio" name="order" value="asc" th:checked="${order == 'asc'}" onchange="submitForm()"> Ascending</label>
+          <label><input type="radio" name="order" value="desc" th:checked="${order == 'desc'}" onchange="submitForm()"> Descending</label>
+        </div>
+      </form>
+    </div>
+  </div>
+  <table class="table table-hover" th:unless="${#lists.isEmpty(events)}">
+    <tr class="table-dark">
+      <th>N°</th>
+      <th>Title</th>
+      <th>Event Date</th>
+      <th>Creation Date</th>
+      <th>Public</th>
+      <th>Event Type</th>
+      <th>Actions</th>
+    </tr>
+    <tr th:each="event, state : ${events}" th:class="${state.even} ? 'table-light' : ''">
+      <td th:text="${state.count + (currentPage * pageSize)}"></td>
+      <td th:text="${event.title}"></td>
+      <td th:text="${event.date}"></td>
+      <td th:text="${event.creationDate}"></td>
+      <td th:text="${event.isPublic ? 'Yes' : 'No'}"></td>
+      <td th:text="${event.eventType != null ? event.eventType.name : 'ND'}"></td>
+      <td>
+        <div class="row">
+          <form class="col-6" th:action="@{|/events/${event.id}/edit|}" method="get">
+            <input type="submit" class="btn btn-success" value="Update">
+          </form>
+          <form class="col-6" th:action="@{|/events/${event.id}/delete|}" method="post">
+            <input type="submit" class="btn btn-danger" value="Delete">
+          </form>
+        </div>
+      </td>
+    </tr>
+  </table>
+  <div class="alert alert-warning" th:if="${#lists.isEmpty(events)}">
+    No events found!
+  </div>
+  <div>
+    <ul class="pagination pagination-sm">
+      <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled' : ''">
+        <a class="page-link" th:if="${sortBy == null}" th:href="@{/events(page=${currentPage - 1})}">&laquo;</a>
+        <a class="page-link" th:unless="${sortBy == null}" th:href="@{/events/filter(sortBy=${sortBy}, order=${order}, page=${currentPage - 1})}">&laquo;</a>
+      </li>
+      <li th:each="index : ${#numbers.sequence(0, totalPages - 1)}" class="page-item" th:classappend="${currentPage == index} ? 'active' : ''">
+        <a class="page-link" th:if="${sortBy == null}" th:href="@{/events(page=${index})}" th:text="${index + 1}"></a>
+        <a class="page-link" th:unless="${sortBy == null}" th:href="@{/events/filter(sortBy=${sortBy}, order=${order}, page=${index})}" th:text="${index + 1}"></a>
+      </li>
+      <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
+        <a class="page-link" th:if="${sortBy == null}" th:href="@{/events(page=${currentPage != null ? currentPage - 1 : 0})}">&laquo;</a>
+        <a class="page-link" th:unless="${sortBy == null}" th:href="@{/events/filter(sortBy=${sortBy}, order=${order}, page=${currentPage != null ? currentPage - 1 : 0})}">&laquo;</a>
+      </li>
+    </ul>
+  </div>
+</div>
+<footer class="mt-5">
+  <p class="text-center">
+    &copy; <span th:text="${#dates.year(#dates.createNow())}"></span> MyFirstSpringMVCApp. All rights reserved.
+  </p>
+  <script th:src="@{/webjars/popper.js/umd/popper.min.js}"></script>
+  <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+</footer>
+</body>
+
+</html>

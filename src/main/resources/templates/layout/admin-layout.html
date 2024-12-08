@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Default Layout</title>
+    <script type="text/javascript"></script>
+    <link rel="stylesheet" th:href="@{/webjars/bootswatch/dist/zephyr/bootstrap.css}">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        .container-fluid {
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Side Navbar -->
+        <div th:replace="~{fragments/sidebar :: nav}" class="col-3  px-1 bg-dark position-fixed" id="sticky-sidebar"></div>
+
+        <!-- Main Content -->
+        <div class="col py-4" id="main">
+            <!--Header-->
+            <div th:replace="~{fragments/topbar :: header (title=${title})}"></div>
+            <main role="main" class="px-4">
+                <div class="container" th:insert="~{::content}"></div>
+            </main>
+        </div>
+    </div>
+</div>
+</body>
+</html>

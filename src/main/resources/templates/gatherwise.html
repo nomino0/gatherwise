@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Greeting App</title>
+<script type="text/javascript"></script>
+</head>
+<body>
+    <header>
+        <h1>Welcome to Greeting APP</h1>
+        <img th:src="@{'images/logo.png'}" alt="" width="100" height="100">
+    </header>
+<h1 th:text="'Hello,'+ ${name}+'!'">Hello world from HTML</h1>
+<h1 th:text="|Hello, ${name}|">Hello world from HTML</h1>
+<p th:utext="|Hello, ${name}|">Hello world from HTML</p>
+<h3 th:text="|You have ${age} years!|"></h3>
+<p th:if="(${age}<60)"> You are young</p>
+<p th:unless="(${age}<60)"> You are very old</p>
+<p th:if="!(${age}<60)"> You are very old</p>
+<p th:if="(${age}>=60)"> You are very old</p>
+<p th:text="(${age}<60)?'You are young':'You are very old'"></p>
+<th:block th:switch="${user.role}">
+   <p th:case="'admin'" th:text="|${user.name} is an administrator|"> User is an administrator</p>
+   <p th:case="'manager'"> User is a manager</p>
+   <p th:case="'staff'"> User is a staff</p>
+   <p th:case="*"> User has other role!</p>
+</th:block>
+ <ul>
+    <th:block th:each="name,state:${names}">
+        <li  th:text="|${state.index}#${state.count}#${state.odd}#${state.even}#${state.first}#${state.last}#Name=${name}|"></li>
+    </th:block>
+ </ul>
+ <th:block th:with="name=${names[0]}">
+    <p th:text="|Name=${name}|"></p>
+</th:block>
+
+</body>
+</html>
+
