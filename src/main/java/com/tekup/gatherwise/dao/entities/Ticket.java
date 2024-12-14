@@ -17,6 +17,7 @@ public class Ticket {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   private String ticketType;
+  private String description;
   private int price;
   private int quantity;
 
@@ -24,9 +25,10 @@ public class Ticket {
   @JoinColumn(name = "event_id", nullable = true)
   private Event event;
 
-  public Ticket(Long id, String ticketType, int price, int quantity) {
+  public Ticket(Long id, String ticketType,String description , int price, int quantity) {
     this.id = id;
     this.ticketType = ticketType;
+    this.description = description;
     this.price = price;
     this.quantity = quantity;
   }

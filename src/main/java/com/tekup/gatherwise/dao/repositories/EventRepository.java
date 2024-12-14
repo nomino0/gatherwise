@@ -13,6 +13,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     List<Event> findByTitleContaining(String title);
     List<Event> findByEventType(EventType eventType);
     Page<Event> findByIsPublic(Boolean isPublic, Pageable pageable);
+    Page<Event> findByIsArchived(Boolean isArchived, Pageable pageable);
     Page<Event> findByEventType(EventType eventType, Pageable pageable);
     Page<Event> findByIsPublicAndEventType(Boolean isPublic, EventType eventType, Pageable pageable);
 }

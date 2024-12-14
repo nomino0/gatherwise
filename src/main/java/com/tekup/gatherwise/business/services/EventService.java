@@ -13,12 +13,13 @@ public interface EventService {
     List<Event> getAllEvents();
     Event getEventById(Long id);
     List<Event> getEventsByTitle(String title);
-    List<Event> getEventsSortedByDate(String order);
+    List<Event> getEventsSortedByStartDate(String order);
     Page<Event> getAllEventsPagination(Pageable pageable);
     Page<Event> getEventsSortedByDatePagination(String order, Pageable pageable);
     List<Event> getEventsByPublicStatus(Boolean isPublic);
     List<Event> getEventsByEventType(EventType eventType);
     Page<Event> getEventsByPublicStatusPagination(Boolean isPublic, Pageable pageable);
+    Page<Event> getEventsByArchiveStatusPagination(Boolean isArchived, Pageable pageable);
     Page<Event> getEventsByEventTypePagination(EventType eventType, Pageable pageable);
     Page<Event> getEventsByPublicStatusAndEventTypePagination(Boolean isPublic, EventType eventType, Pageable pageable);
 

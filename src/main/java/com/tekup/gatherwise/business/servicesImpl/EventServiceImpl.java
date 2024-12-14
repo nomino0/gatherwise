@@ -36,9 +36,9 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<Event> getEventsSortedByDate(String order) {
+    public List<Event> getEventsSortedByStartDate(String order) {
         Sort.Direction direction = "desc".equalsIgnoreCase(order) ? Sort.Direction.DESC : Sort.Direction.ASC;
-        return eventRepository.findAll(Sort.by(direction, "date"));
+        return eventRepository.findAll(Sort.by(direction, "startDate"));
     }
 
     @Override
@@ -49,7 +49,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public Page<Event> getEventsSortedByDatePagination(String order, Pageable pageable) {
         Sort.Direction direction = "desc".equalsIgnoreCase(order) ? Sort.Direction.DESC : Sort.Direction.ASC;
-        Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, "date"));
+        Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, "startDate"));
         return eventRepository.findAll(sortedPageable);
     }
 
@@ -67,6 +67,11 @@ public class EventServiceImpl implements EventService {
     @Override
     public Page<Event> getEventsByPublicStatusPagination(Boolean isPublic, Pageable pageable) {
         return eventRepository.findByIsPublic(isPublic, pageable);
+    }
+
+    @Override
+    public Page<Event> getEventsByArchiveStatusPagination(Boolean isArchived, Pageable pageable) {
+        return eventRepository.findByIsArchived(isArchived, pageable);
     }
 
     @Override

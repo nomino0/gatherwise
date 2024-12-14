@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Date;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,8 +24,10 @@ public class EventForm {
     @Min(value = 1, message = "Tickets number must be at least 1")
     private int ticketsNumber;
     @NotNull(message = "Date is required")
-    private Date date;
+    private Date startDate;
     @NotNull(message = "Start time is required")
+    private Date endDate;
+    @NotNull(message = "End date is required")
     private String startTime;
     @NotNull(message = "End time is required")
     private String endTime;
@@ -38,7 +41,7 @@ public class EventForm {
     private String locationPhone;
     private String locationEmail;
     private Boolean isPublic;
-    @NotNull (message = "Event type is required")
+    @NotNull(message = "Event type is required")
     private EventType eventType;
-
+    private List<TicketForm> tickets;
 }

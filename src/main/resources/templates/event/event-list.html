@@ -5,7 +5,12 @@
   <meta charset="UTF-8">
   <title>Event List</title>
   <script type="text/javascript">
-    function submitForm() {
+    function handleFilterChange(filter, filterType) {
+      if (filterType === 'isPublic') {
+        document.getElementById("isPublic").value = filter;
+      } else if (filterType === 'isArchived') {
+        document.getElementById("isArchived").value = filter;
+      }
       document.getElementById("filterForm").submit();
     }
   </script>
@@ -14,36 +19,62 @@
 
 <body th:replace="layout/admin-layout::body(title='Event List')">
 <div th:fragment="content">
-  <div class="row mt-3 mb-4">
+  <div >
     <div class="col-8">
-      <a class="btn btn-primary" th:href="@{/events/create}">Add Event</a>
+      <a class="btn btn-primary" th:href="@{/events/create}">  <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              width="20" height="20"
+      >
+        <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg> Add Event</a>
     </div>
-    <div class="col-4">
+    <div class="col-12 mb-2 mt-4">
       <form th:action="@{/events/filter}" method="get" id="filterForm">
-        <div class="form-group">
-          <label for="isPublic"><strong>Public:</strong></label>
-          <select name="isPublic" id="isPublic" class="form-control" onchange="submitForm()">
-            <option value="" th:selected="${isPublic == null}">All</option>
-            <option value="true" th:selected="${isPublic == true}">Yes</option>
-            <option value="false" th:selected="${isPublic == false}">No</option>
-          </select>
+        <div class="row justify-content-between">
+          <div class="col-md-4">
+            <label><strong>Event Statuses:</strong></label>
+            <div class="btn-group" role="group" aria-label="Public Filter">
+              <button type="button" class="btn btn-secondary" th:classappend="${isPublic == null} ? 'btn btn-light' : ''" onclick="handleFilterChange('', 'isPublic')">All</button>
+              <button type="button" class="btn btn-secondary" th:classappend="${isPublic == true} ? 'btn btn-light' : ''" onclick="handleFilterChange('true', 'isPublic')">Public</button>
+              <button type="button" class="btn btn-secondary" th:classappend="${isPublic == false} ? 'btn btn-light' : ''" onclick="handleFilterChange('false', 'isPublic')">Not Public</button>
+              <button type="button" class="btn btn-secondary" th:classappend="${isArchived == true} ? 'btn btn-light' : ''" onclick="handleFilterChange('true', 'isArchived')">Archived</button>
+            </div>
+          </div>
+          <div class="col-md-4">
+          <div class="form-group">
+            <label for="eventTypeId"><strong>Event Type:</strong></label>
+            <select name="eventTypeId" id="eventTypeId" class="form-control" onchange="submitForm()">
+              <option value="" th:selected="${eventTypeId == null}">All</option>
+              <option th:each="eventType : ${eventTypes}" th:value="${eventType.id}" th:text="${eventType.typeName}" th:selected="${eventTypeId == eventType.id}"></option>
+            </select>
+          </div>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="eventTypeId"><strong>Event Type:</strong></label>
-          <select name="eventTypeId" id="eventTypeId" class="form-control" onchange="submitForm()">
-            <option value="" th:selected="${eventTypeId == null}">All</option>
-            <option th:each="eventType : ${eventTypes}" th:value="${eventType.id}" th:text="${eventType.name}" th:selected="${eventTypeId == eventType.id}"></option>
-          </select>
-        </div>
+
+
+        <div class="row justify-content-between mt-2 mb-4">
+          <div class="col-md-4">
         <div class="form-group">
           <label><strong>Sort by:</strong></label>
           <label><input type="radio" name="sortBy" value="creationDate" th:checked="${sortBy == 'creationDate'}" onchange="submitForm()"> Creation Date</label>
-          <label><input type="radio" name="sortBy" value="date" th:checked="${sortBy == 'date'}" onchange="submitForm()"> Event Date</label>
+          <label><input type="radio" name="sortBy" value="startDate" th:checked="${sortBy == 'startDate'}" onchange="submitForm()"> Event startDate</label>
         </div>
+            </div>
+            <div class="col-md-4">
         <div class="form-group">
           <label><strong>Order:</strong></label>
           <label><input type="radio" name="order" value="asc" th:checked="${order == 'asc'}" onchange="submitForm()"> Ascending</label>
           <label><input type="radio" name="order" value="desc" th:checked="${order == 'desc'}" onchange="submitForm()"> Descending</label>
+        </div>
+            </div>
         </div>
       </form>
     </div>
@@ -52,7 +83,7 @@
     <tr class="table-dark">
       <th>N°</th>
       <th>Title</th>
-      <th>Event Date</th>
+      <th>Start Date</th>
       <th>Creation Date</th>
       <th>Public</th>
       <th>Event Type</th>
@@ -61,7 +92,7 @@
     <tr th:each="event, state : ${events}" th:class="${state.even} ? 'table-light' : ''">
       <td th:text="${state.count + (currentPage * pageSize)}"></td>
       <td th:text="${event.title}"></td>
-      <td th:text="${event.date}"></td>
+      <td th:text="${event.startDate}"></td>
       <td th:text="${event.creationDate}"></td>
       <td th:text="${event.isPublic ? 'Yes' : 'No'}"></td>
       <td th:text="${event.eventType != null ? event.eventType.name : 'ND'}"></td>
@@ -99,7 +130,7 @@
 </div>
 <footer class="mt-5">
   <p class="text-center">
-    &copy; <span th:text="${#dates.year(#dates.createNow())}"></span> MyFirstSpringMVCApp. All rights reserved.
+    &copy; <span th:text="${#dates.year(#dates.createNow())}"></span> GatherWise We gather for good. All rights reserved.
   </p>
   <script th:src="@{/webjars/popper.js/umd/popper.min.js}"></script>
   <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>

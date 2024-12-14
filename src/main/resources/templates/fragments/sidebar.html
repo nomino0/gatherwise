@@ -12,22 +12,22 @@
         <p class="pl-2"><small>MENU</small></p>
         <ul class="nav flex-column gap-2 ">
             <li class="">
-                <a class="btn text-start w-100" th:classappend="${page == 'dashboard'} ? 'btn-outline-primary' : 'btn-secondary'" th:href="@{/dashboard}">
+                <a class="btn text-start w-100" th:classappend="${page == 'dashboard'} ? 'btn btn-light' : 'btn-secondary'" th:href="@{/dashboard}">
                     Dashboard
                 </a>
             </li>
             <li class="nav-item">
-                <a class="btn text-start w-100" th:classappend="${page == 'events'} ? 'btn-outline-primary' : 'btn-secondary'" th:href="@{/events}">
+                <a class="btn text-start w-100" th:classappend="${page == 'events'} ? 'btn btn-light' : 'btn-secondary'" th:href="@{/events}">
                     Event Management
                 </a>
             </li>
             <li class="nav-item">
-                <a class="btn text-start w-100" th:classappend="${page == 'event-types'} ? 'btn-outline-primary' : 'btn-secondary'" th:href="@{/event-types}">
+                <a class="btn text-start w-100" th:classappend="${page == 'event-types'} ? 'btn btn-light' : 'btn-secondary'" th:href="@{/event-types}">
                     Event Type Management
                 </a>
             </li>
             <li class="nav-item">
-                <a class="btn text-start w-100" th:classappend="${page == 'tickets'} ? 'btn-outline-primary' : 'btn-secondary'" th:href="@{/tickets}">
+                <a class="btn text-start w-100" th:classappend="${page == 'tickets'} ? 'btn btn-light' : 'btn-secondary'" th:href="@{/tickets}">
                     Ticket Management
                 </a>
             </li>
