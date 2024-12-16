@@ -1,16 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html lang="">
 
 <head>
   <meta charset="UTF-8">
   <title>Event List</title>
   <script type="text/javascript">
-    function handleFilterChange(filter, filterType) {
-      if (filterType === 'isPublic') {
-        document.getElementById("isPublic").value = filter;
-      } else if (filterType === 'isArchived') {
-        document.getElementById("isArchived").value = filter;
+    function handleSort(sortKey) {
+      const currentSortKey = document.getElementById("sortKey").value;
+      const currentSortDirection = document.getElementById("sortDirection").value;
+      let newSortDirection = "asc";
+
+      if (currentSortKey === sortKey && currentSortDirection === "asc") {
+        newSortDirection = "desc";
       }
+
+      document.getElementById("sortKey").value = sortKey;
+      document.getElementById("sortDirection").value = newSortDirection;
+      document.getElementById("filterForm").submit();
+    }
+
+    function handleFilterChange(value, filterName) {
+      document.getElementById(filterName).value = value;
+      document.getElementById("filterForm").submit();
+    }
+
+    function submitForm() {
       document.getElementById("filterForm").submit();
     }
   </script>
@@ -19,99 +33,128 @@
 
 <body th:replace="layout/admin-layout::body(title='Event List')">
 <div th:fragment="content">
-  <div >
+  <div>
     <div class="col-8">
-      <a class="btn btn-primary" th:href="@{/events/create}">  <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              width="20" height="20"
-      >
-        <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-        />
-      </svg> Add Event</a>
+      <a class="btn btn-primary" th:href="@{/events/create}">
+        <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                width="20" height="20"
+        >
+          <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg> Add Event</a>
     </div>
     <div class="col-12 mb-2 mt-4">
       <form th:action="@{/events/filter}" method="get" id="filterForm">
+        <input type="hidden" id="sortKey" name="sortBy" th:value="${sortBy}">
+        <input type="hidden" id="sortDirection" name="order" th:value="${order}">
+        <input type="hidden" id="isPublic" name="isPublic" th:value="${isPublic}">
+        <input type="hidden" id="isArchived" name="isArchived" th:value="${isArchived}">
         <div class="row justify-content-between">
-          <div class="col-md-4">
-            <label><strong>Event Statuses:</strong></label>
+          <div class="col-md-3">
+            <label class="form-label me-2"><strong>Event Visibility:</strong></label>
             <div class="btn-group" role="group" aria-label="Public Filter">
               <button type="button" class="btn btn-secondary" th:classappend="${isPublic == null} ? 'btn btn-light' : ''" onclick="handleFilterChange('', 'isPublic')">All</button>
               <button type="button" class="btn btn-secondary" th:classappend="${isPublic == true} ? 'btn btn-light' : ''" onclick="handleFilterChange('true', 'isPublic')">Public</button>
               <button type="button" class="btn btn-secondary" th:classappend="${isPublic == false} ? 'btn btn-light' : ''" onclick="handleFilterChange('false', 'isPublic')">Not Public</button>
-              <button type="button" class="btn btn-secondary" th:classappend="${isArchived == true} ? 'btn btn-light' : ''" onclick="handleFilterChange('true', 'isArchived')">Archived</button>
             </div>
           </div>
           <div class="col-md-4">
-          <div class="form-group">
-            <label for="eventTypeId"><strong>Event Type:</strong></label>
-            <select name="eventTypeId" id="eventTypeId" class="form-control" onchange="submitForm()">
-              <option value="" th:selected="${eventTypeId == null}">All</option>
-              <option th:each="eventType : ${eventTypes}" th:value="${eventType.id}" th:text="${eventType.typeName}" th:selected="${eventTypeId == eventType.id}"></option>
-            </select>
-          </div>
+            <div class="form-group">
+              <label for="eventTypeId" class="form-label me-2"><strong>Event Type:</strong></label>
+              <select name="eventTypeId" id="eventTypeId" class="form-control" onchange="submitForm()">
+                <option value="" th:selected="${eventTypeId == null}">All</option>
+                <option th:each="eventType : ${eventTypes}" th:value="${eventType.id}" th:text="${eventType.typeName}" th:selected="${eventTypeId == eventType.id}"></option>
+              </select>
+            </div>
           </div>
         </div>
-
-
         <div class="row justify-content-between mt-2 mb-4">
+          <div class="col-md-3">
+            <label class="form-label me-2"><strong>Event Status:</strong></label>
+            <div class="btn-group" role="group" aria-label="Archived Filter">
+              <button type="button" class="btn btn-secondary" th:classappend="${isArchived == null} ? 'btn btn-light' : ''" onclick="handleFilterChange('', 'isArchived')">All</button>
+              <button type="button" class="btn btn-secondary" th:classappend="${isArchived == true} ? 'btn btn-light' : ''" onclick="handleFilterChange('true', 'isArchived')">Archived</button>
+              <button type="button" class="btn btn-secondary" th:classappend="${isArchived == false} ? 'btn btn-light' : ''" onclick="handleFilterChange('false', 'isArchived')">Not Archived</button>
+            </div>
+          </div>
           <div class="col-md-4">
-        <div class="form-group">
-          <label><strong>Sort by:</strong></label>
-          <label><input type="radio" name="sortBy" value="creationDate" th:checked="${sortBy == 'creationDate'}" onchange="submitForm()"> Creation Date</label>
-          <label><input type="radio" name="sortBy" value="startDate" th:checked="${sortBy == 'startDate'}" onchange="submitForm()"> Event startDate</label>
-        </div>
-            </div>
-            <div class="col-md-4">
-        <div class="form-group">
-          <label><strong>Order:</strong></label>
-          <label><input type="radio" name="order" value="asc" th:checked="${order == 'asc'}" onchange="submitForm()"> Ascending</label>
-          <label><input type="radio" name="order" value="desc" th:checked="${order == 'desc'}" onchange="submitForm()"> Descending</label>
-        </div>
-            </div>
+            <form class="d-flex" th:action="@{/events/filter}" method="get">
+              <label class="form-label me-2"><strong>Search Event:</strong></label>
+              <div class="input-group">
+                <input class="form-control" type="search" name="search" placeholder="Search">
+                <button class="btn btn-secondary" type="submit">Search</button>
+              </div>
+            </form>
+          </div>
         </div>
       </form>
     </div>
   </div>
-  <table class="table table-hover" th:unless="${#lists.isEmpty(events)}">
-    <tr class="table-dark">
-      <th>N°</th>
-      <th>Title</th>
-      <th>Start Date</th>
-      <th>Creation Date</th>
-      <th>Public</th>
-      <th>Event Type</th>
-      <th>Actions</th>
-    </tr>
-    <tr th:each="event, state : ${events}" th:class="${state.even} ? 'table-light' : ''">
-      <td th:text="${state.count + (currentPage * pageSize)}"></td>
-      <td th:text="${event.title}"></td>
-      <td th:text="${event.startDate}"></td>
-      <td th:text="${event.creationDate}"></td>
-      <td th:text="${event.isPublic ? 'Yes' : 'No'}"></td>
-      <td th:text="${event.eventType != null ? event.eventType.name : 'ND'}"></td>
-      <td>
-        <div class="row">
-          <form class="col-6" th:action="@{|/events/${event.id}/edit|}" method="get">
-            <input type="submit" class="btn btn-success" value="Update">
-          </form>
-          <form class="col-6" th:action="@{|/events/${event.id}/delete|}" method="post">
-            <input type="submit" class="btn btn-danger" value="Delete">
-          </form>
-        </div>
-      </td>
-    </tr>
-  </table>
+  <div class="rounded-2 overflow-hidden">
+    <table class="table table-hover" th:unless="${#lists.isEmpty(events)}">
+      <tr class="table-dark">
+        <th>N°</th>
+        <th>Title</th>
+        <th>
+          <button class="btn nav-link" onclick="handleSort('startDate')" style="all: unset; cursor: pointer;">
+            <span>Event Date</span>
+            <svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24px" height="24px" stroke-width="1.5" stroke="currentColor" class="w-5 h-5" th:if="${sortBy == 'startDate' && order == 'desc'}">
+              <path fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h7m-7 6h7m-7 6h9m2-9l3-3l3 3m-3-3v12"/>
+            </svg>
+            <svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24px" height="24px" stroke-width="1.5" stroke="currentColor" class="w-5 h-5" th:if="${sortBy == 'startDate' && order == 'asc'}">
+              <path fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h9m-9 6h7m-7 6h7m4-3l3 3l3-3m-3-9v12"/>
+            </svg>
+          </button>
+        </th>
+        <th>
+          <button class="btn nav-link" onclick="handleSort('creationDate')" style="all: unset; cursor: pointer;">
+            <span>Creation Date</span>
+            <svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24px" height="24px" stroke-width="1.5" stroke="currentColor" class="w-5 h-5" th:if="${sortBy == 'creationDate' && order == 'desc'}">
+              <path fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h7m-7 6h7m-7 6h9m2-9l3-3l3 3m-3-3v12"/>
+            </svg>
+            <svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24px" height="24px" stroke-width="1.5" stroke="currentColor" class="w-5 h-5" th:if="${sortBy == 'creationDate' && order == 'asc'}">
+              <path fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h9m-9 6h7m-7 6h7m4-3l3 3l3-3m-3-9v12"/>
+            </svg>
+          </button>
+        </th>
+        <th>Visibility</th>
+        <th>Archived</th>
+        <th>Event Type</th>
+        <th>Actions</th>
+      </tr>
+      <tr th:each="event, state : ${events}" th:class="${state.even} ? 'table-light' : ''">
+        <td th:text="${state.count + (currentPage * pageSize)}"></td>
+        <td th:text="${event.title}"></td>
+        <td th:text="${event.startDate}"></td>
+        <td th:text="${event.creationDate}"></td>
+        <td th:text="${event.isPublic ? 'Public' : 'Not Public'}"></td>
+        <td th:text="${event.isArchived ? 'Yes' : 'No'}"></td>
+        <td th:text="${event.eventType != null ? event.eventType.typeName : 'ND'}"></td>
+        <td>
+          <div class="row">
+            <form class="col-4" th:action="@{|/events/${event.id}/edit|}" method="get">
+              <input type="submit" class="btn btn-success" value="Update">
+            </form>
+            <form class="col-4" th:action="@{|/events/${event.id}/delete|}" method="post">
+              <input type="submit" class="btn btn-danger" value="Delete">
+            </form>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
   <div class="alert alert-warning" th:if="${#lists.isEmpty(events)}">
     No events found!
   </div>
-  <div>
+  <div th:if="${!#lists.isEmpty(events)}">
     <ul class="pagination pagination-sm">
       <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled' : ''">
         <a class="page-link" th:if="${sortBy == null}" th:href="@{/events(page=${currentPage - 1})}">&laquo;</a>
@@ -122,19 +165,13 @@
         <a class="page-link" th:unless="${sortBy == null}" th:href="@{/events/filter(sortBy=${sortBy}, order=${order}, page=${index})}" th:text="${index + 1}"></a>
       </li>
       <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
-        <a class="page-link" th:if="${sortBy == null}" th:href="@{/events(page=${currentPage != null ? currentPage - 1 : 0})}">&laquo;</a>
-        <a class="page-link" th:unless="${sortBy == null}" th:href="@{/events/filter(sortBy=${sortBy}, order=${order}, page=${currentPage != null ? currentPage - 1 : 0})}">&laquo;</a>
+        <a class="page-link" th:if="${sortBy == null}" th:href="@{/events(page=${currentPage != null ? currentPage - 1 : 0})}">»</a>
+        <a class="page-link" th:unless="${sortBy == null}" th:href="@{/events/filter(sortBy=${sortBy}, order=${order}, page=${currentPage != null ? currentPage - 1 : 0})}">»</a>
       </li>
     </ul>
   </div>
 </div>
-<footer class="mt-5">
-  <p class="text-center">
-    &copy; <span th:text="${#dates.year(#dates.createNow())}"></span> GatherWise We gather for good. All rights reserved.
-  </p>
-  <script th:src="@{/webjars/popper.js/umd/popper.min.js}"></script>
-  <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
-</footer>
+
 </body>
 
 </html>

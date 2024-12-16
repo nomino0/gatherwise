@@ -1,17 +1,14 @@
 package com.tekup.gatherwise.business.servicesImpl;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-
 import com.tekup.gatherwise.business.services.TicketService;
 import com.tekup.gatherwise.dao.entities.Ticket;
 import com.tekup.gatherwise.dao.repositories.TicketRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class TicketServiceImpl implements TicketService {
@@ -30,18 +27,18 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public List<Ticket> getTicketsByType(String ticketType) {
+    public List<Ticket> getTicketsByTicketType(String ticketType) {
         return ticketRepository.findByTicketTypeContaining(ticketType);
-    }
-
-    @Override
-    public Page<Ticket> getAllTicketsPagination(Pageable pageable) {
-        return ticketRepository.findAll(pageable);
     }
 
     @Override
     public Page<Ticket> getTicketsByEventId(Long eventId, Pageable pageable) {
         return ticketRepository.findByEventId(eventId, pageable);
+    }
+
+    @Override
+    public List<Ticket> getTicketsByEventId(Long eventId) {
+        return ticketRepository.findByEventId(eventId, Pageable.unpaged()).getContent();
     }
 
     @Override

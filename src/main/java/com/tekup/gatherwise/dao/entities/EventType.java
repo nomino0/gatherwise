@@ -28,17 +28,22 @@ public class EventType {
     @Column(name="type_name", nullable = false,unique = true)
     private String typeName;
     private String description;
+    private String icon;
 
     @OneToMany(mappedBy = "eventType",cascade = CascadeType.ALL)
 
     private List<Event> events;
 
-    public EventType(Long id, String typeName, String description) {
+    public EventType(Long id) {
         this.id = id;
-        this.typeName = typeName;
-        this.description = description;
+
     }
 
 
-    
+    public EventType(Long id, String typeName, String description, String string) {
+        this.id = id;
+        this.typeName = typeName;
+        this.description = description;
+        this.icon = string;
+    }
 }

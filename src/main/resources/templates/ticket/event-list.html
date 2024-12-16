@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Event List</title>
+    <script type="text/javascript">
+        function handleSort(sortKey) {
+            const currentSortKey = document.getElementById("sortKey").value;
+            const currentSortDirection = document.getElementById("sortDirection").value;
+            let newSortDirection = "asc";
+
+            if (currentSortKey === sortKey && currentSortDirection === "asc") {
+                newSortDirection = "desc";
+            }
+
+            document.getElementById("sortKey").value = sortKey;
+            document.getElementById("sortDirection").value = newSortDirection;
+            document.getElementById("filterForm").submit();
+        }
+
+        function handleFilterChange(value, filterName) {
+            document.getElementById(filterName).value = value;
+            document.getElementById("filterForm").submit();
+        }
+
+        function submitForm() {
+            document.getElementById("filterForm").submit();
+        }
+    </script>
+    <link th:replace="layout/admin-layout::link">
+</head>
+
+<body th:replace="layout/admin-layout::body(title='Event List')">
+<div th:fragment="content">
+    <div>
+
+        <div class="col-12 mb-2 ">
+            <form th:action="@{/events/filter}" method="get" id="filterForm">
+
+                <div class="row justify-content-between mt-2 mb-4">
+                    <div class="col-md-4 pt-3">
+                        <a class="btn btn-primary" th:href="@{/events/create}">
+                            <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.5"
+                                    stroke="currentColor"
+                                    width="20" height="20"
+                            >
+                                <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                                />
+                            </svg> Add Event
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <form class="d-flex" th:action="@{/events/filter}" method="get">
+                            <label class="form-label me-2"><strong>Search Event:</strong></label>
+                            <div class="input-group">
+                                <input class="form-control" type="search" name="search" placeholder="Search">
+                                <button class="btn btn-secondary" type="submit">Search</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="rounded-2 overflow-hidden">
+        <table class="table table-hover" th:unless="${#lists.isEmpty(events)}">
+            <tr class="table-dark">
+                <th>N°</th>
+                <th>Title</th>
+                <th>
+                    <button class="btn nav-link" onclick="handleSort('startDate')" style="all: unset; cursor: pointer;">
+                        <span>Event Date</span>
+                        <svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24px" height="24px" stroke-width="1.5" stroke="currentColor" class="w-5 h-5" th:if="${sortBy == 'startDate' && order == 'asc'}">
+                            <path fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h7m-7 6h7m-7 6h9m2-9l3-3l3 3m-3-3v12"/>
+                        </svg>
+                        <svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24px" height="24px" stroke-width="1.5" stroke="currentColor" class="w-5 h-5" th:if="${sortBy == 'startDate' && order == 'desc'}">
+                            <path fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h9m-9 6h7m-7 6h7m4-3l3 3l3-3m-3-9v12"/>
+                        </svg>
+                    </button>
+                </th>
+                <th>Tickets Types</th>
+                <th>
+                    <button class="btn nav-link" onclick="handleSort('ticketsNumber')" style="all: unset; cursor: pointer;">
+                        <span>Total Number</span>
+                        <svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24px" height="24px" stroke-width="1.5" stroke="currentColor" class="w-5 h-5" th:if="${sortBy == 'creationDate' && order == 'asc'}">
+                            <path fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h7m-7 6h7m-7 6h9m2-9l3-3l3 3m-3-3v12"/>
+                        </svg>
+                        <svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24px" height="24px" stroke-width="1.5" stroke="currentColor" class="w-5 h-5" th:if="${sortBy == 'creationDate' && order == 'desc'}">
+                            <path fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h9m-9 6h7m-7 6h7m4-3l3 3l3-3m-3-9v12"/>
+                        </svg>
+                    </button>
+                </th>
+                <th>Sold Tickets</th>
+                <th>Available Tickets</th>
+
+                <th>Actions</th>
+            </tr>
+            <tr th:each="event, state : ${events}" th:class="${state.even} ? 'table-light' : ''">
+                <td th:text="${state.count + (currentPage * pageSize)}"></td>
+                <td th:text="${event.title}"></td>
+                <td th:text="${event.startDate} + ' -- ' + ${event.endDate}"></td>
+                <td th:text="${event.totalTicketTypes}"></td>
+                <td th:text="${event.totalTickets}"></td>
+                <td></td>
+                <td></td>
+
+                <td>
+                    <div class="row">
+                        <form class="col-4" th:action="@{|/tickets/${event.id}/list|}" method="get">
+                            <input type="submit" class="btn btn-secondary" value="Tickets List">
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="alert alert-warning" th:if="${#lists.isEmpty(events)}">
+        No events found!
+    </div>
+    <div >
+        <ul class="pagination pagination-sm">
+            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled' : ''">
+                <a class="page-link" th:if="${sortBy == null}" th:href="@{/events(page=${currentPage - 1})}">&laquo;</a>
+                <a class="page-link" th:unless="${sortBy == null}" th:href="@{/events/filter(sortBy=${sortBy}, order=${order}, page=${currentPage - 1})}">&laquo;</a>
+            </li>
+            <li th:each="index : ${#numbers.sequence(0, totalPages - 1)}" class="page-item" th:classappend="${currentPage == index} ? 'active' : ''">
+                <a class="page-link" th:if="${sortBy == null}" th:href="@{/events(page=${index})}" th:text="${index + 1}"></a>
+                <a class="page-link" th:unless="${sortBy == null}" th:href="@{/events/filter(sortBy=${sortBy}, order=${order}, page=${index})}" th:text="${index + 1}"></a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
+                <a class="page-link" th:if="${sortBy == null}" th:href="@{/events(page=${currentPage != null ? currentPage - 1 : 0})}">»</a>
+                <a class="page-link" th:unless="${sortBy == null}" th:href="@{/events/filter(sortBy=${sortBy}, order=${order}, page=${currentPage != null ? currentPage - 1 : 0})}">»</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+</body>
+
+</html>

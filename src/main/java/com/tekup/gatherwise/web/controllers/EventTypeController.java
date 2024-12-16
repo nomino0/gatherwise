@@ -1,5 +1,7 @@
 package com.tekup.gatherwise.web.controllers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,12 +12,23 @@ import com.tekup.gatherwise.business.services.EventTypeService;
 import com.tekup.gatherwise.dao.entities.EventType;
 
 import jakarta.validation.Valid;
+import org.springframework.web.multipart.MultipartFile;
+import org.thymeleaf.model.IModel;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+
+
 
 @Controller
 @RequestMapping("/event-types")
 public class EventTypeController {
+
+
+    private static final Logger logger = LoggerFactory.getLogger(EventController.class);
+    private static final String uploadDirectory = System.getProperty("user.dir") + "/src/main/resources/static/images";
 
     @Autowired
     private EventTypeService eventTypeService;
@@ -24,47 +37,97 @@ public class EventTypeController {
     public String listEventTypes(Model model) {
         List<EventType> eventTypes = eventTypeService.getAllEventTypes();
         model.addAttribute("eventTypes", eventTypes);
-        return "eventType/eventTypeList"; // Nom du fichier HTML/Thymeleaf pour afficher la liste des types d'événements
+        return "eventType/eventType-list"; // Nom du fichier HTML/Thymeleaf pour afficher la liste des types d'événements
     }
 
     @GetMapping("/create")
     public String showFormAddEventType(Model model) {
         EventType eventType = new EventType();
         model.addAttribute("eventType", eventType);
-        return "eventType/eventTypeAddForm"; // Nom du fichier HTML/Thymeleaf pour le formulaire d'ajout de type d'événement
+        return "eventType/add-eventType"; // Nom du fichier HTML/Thymeleaf pour le formulaire d'ajout de type d'événement
     }
 
-    @PostMapping("/create")
+    @RequestMapping(path="/create", method=RequestMethod.POST)
     public String saveEventType(@Valid @ModelAttribute("eventType") EventType eventType,
-                                BindingResult bindingResult) {
+                                BindingResult bindingResult,
+                                Model model,
+                                @RequestParam("iconFile") MultipartFile file) {
         if(bindingResult.hasErrors()){
-            return "eventType/eventTypeAddForm";
+            return "eventType/add-eventType";
+        }
+        if (!file.isEmpty()) {
+            StringBuilder fileName = new StringBuilder();
+            fileName.append(file.getOriginalFilename());
+            Path newFilePath = Paths.get(uploadDirectory, fileName.toString());
+
+            try {
+                Files.write(newFilePath, file.getBytes());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            this.eventTypeService
+                    .addEventType(new EventType(null, eventType.getTypeName(), eventType.getDescription(), fileName.toString()));
+        } else {
+
+            this.eventTypeService.addEventType(new EventType(null, eventType.getTypeName(), eventType.getDescription(), null));
         }
         eventTypeService.addEventType(eventType);
         return "redirect:/event-types"; // Rediriger vers la liste des types d'événements après l'ajout
     }
 
     @GetMapping("/{id}/edit")
-    public String updateEventType(@PathVariable Long id, Model model) {
+    public String showEditEventTypeForm(@PathVariable Long id, Model model) {
         EventType eventType = eventTypeService.getEventTypeById(id);
         model.addAttribute("eventType", eventType);
-        return "eventType/eventTypeEditForm"; // Nom du fichier HTML/Thymeleaf pour le formulaire de mise à jour de type d'événement
+        return "eventType/edit-eventType";
     }
 
-    @PostMapping("/{id}/edit")
+    @RequestMapping(path = "/{id}/edit", method = RequestMethod.POST)
     public String updateEventType(@PathVariable Long id,
                                   @Valid @ModelAttribute("eventType") EventType eventType,
-                                  BindingResult bindingResult) {
-        if(bindingResult.hasErrors()){
-            return "eventType/eventTypeEditForm";
+                                  BindingResult bindingResult,
+                                  Model model,
+                                  @RequestParam MultipartFile iconFile) {
+        if (bindingResult.hasErrors()) {
+            return "eventType/edit-eventType";
         }
-        eventTypeService.updateEventType(id, eventType);
-        return "redirect:/eventTypes"; // Rediriger vers la liste des types d'événements après la mise à jour
+
+        EventType existingEventType = eventTypeService.getEventTypeById(id);
+        existingEventType.setTypeName(eventType.getTypeName());
+        existingEventType.setDescription(eventType.getDescription());
+
+        if (!iconFile.isEmpty()) {
+            // upload icon
+            StringBuilder fileName = new StringBuilder();
+            Path newFilePath = Paths.get(uploadDirectory, iconFile.getOriginalFilename());
+            fileName.append(iconFile.getOriginalFilename());
+            try {
+                Files.write(newFilePath, iconFile.getBytes());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            // delete old icon
+            if (existingEventType.getIcon() != null) {
+                Path filePath = Paths.get(uploadDirectory, existingEventType.getIcon());
+                try {
+                    Files.deleteIfExists(filePath);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            existingEventType.setIcon(fileName.toString());
+        }
+
+        eventTypeService.updateEventType(id, existingEventType);
+        return "redirect:/event-types";
     }
 
     @PostMapping("/{id}/delete")
     public String deleteEventType(@PathVariable Long id) {
         eventTypeService.deleteEventType(id);
-        return "redirect:/eventTypes"; // Rediriger vers la liste des types d'événements après la suppression
+        return "redirect:/event-types"; // Rediriger vers la liste des types d'événements après la suppression
     }
 }

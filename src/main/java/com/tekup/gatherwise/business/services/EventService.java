@@ -18,6 +18,7 @@ public interface EventService {
     Page<Event> getEventsSortedByDatePagination(String order, Pageable pageable);
     List<Event> getEventsByPublicStatus(Boolean isPublic);
     List<Event> getEventsByEventType(EventType eventType);
+    Page<Event> getEventsByTitle(String title, Pageable pageable);
     Page<Event> getEventsByPublicStatusPagination(Boolean isPublic, Pageable pageable);
     Page<Event> getEventsByArchiveStatusPagination(Boolean isArchived, Pageable pageable);
     Page<Event> getEventsByEventTypePagination(EventType eventType, Pageable pageable);

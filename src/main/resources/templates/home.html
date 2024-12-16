@@ -1,15 +1,127 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/html">
 <head>
-<meta charset="UTF-8">
-<title>Home</title>
-<script type="text/javascript"></script>
-<link th:replace="layout/default-layout::link">
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <script type="text/javascript"></script>
+    <link th:replace="layout/default-layout::link">
+    <style>
+        .video-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            filter: brightness(50%);
+        }
+        .header-content {
+            position: relative;
+            display: flex;
+            justify-content: center;
+
+            text-align: left;
+            color: white;
+            padding: 20px;
+            height: 600px; /* Increased height */
+        }
+        .header-content h1 {
+            font-size: 2em;
+        }
+        .header-content h3 {
+            font-size: 5em;
+        }
+        .header-content p {
+            font-size: 1em;
+        }
+        .event-card:hover img {
+            transform: scale(1.1);
+        }
+
+        .event-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        .event-card:hover img {
+            transform: scale(1.1);
+        }
+        .gradient-bg {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1));
+            color: white;
+            padding: 10px;
+        }
+    </style>
 </head>
 <body th:replace="layout/default-layout::body(title='Home')">
-    <div th:fragment="content">
-         <h1>Welcome to MyFirstSpringMVC</h1>
-    </div>     
+<div th:fragment="content">
+    <div class="header-content">
+        <video class="video-background" autoplay loop muted>
+            <source src="/images/home.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="container my-auto">
+            <h1>GatherWise</h1>
+            <h3>We Gather for Good!</h3>
+            <p>Small description goes here</p>
+        </div>
+    </div>
+    <div class="container my-5">
+        <div class="mb-2">
+            <h5><span class="text-primary-emphasis">Explore ongoing Events:</span></h5>
+        </div>
+        <div class="row ps-4 pe-4 pt-2" th:each="eventType : ${eventTypes}">
+            <div class="col-md-12 mb-4">
+                <h5 th:text="${eventType.typeName} +':'">Event Type</h5>
+            </div>
+            <div class="col-md-4 mb-4 zoomIn" th:each="event : ${eventType.events}">
+                <div class="card h-120 w-140">
+                    <div class="card-img-top position-relative ">
+                        <a th:href="@{/event/${event.id}}">
+                            <img th:if="${event.coverPhoto}"  th:src="@{/images/{coverPhoto}(coverPhoto=${event.coverPhoto})}" class="img-fluid" alt="Event Cover">
+                            <span th:unless="${event.coverPhoto}" class="invalid-feedback">No cover Image</span>
+                            <div class="gradient-bg d-flex justify-content-between">
+                                <div class="pt-2 mt-2 ">
+                                    <h6 class="card-title" th:text="${event.title}"> Title </h6>
+                                    <svg
+                                            role="img"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 24 24"
+                                            width="20px"
+                                            height="20px"
+                                    >
+                                        <g
+                                                fill="none"
+                                                stroke="#ffffff"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                        >
+                                            <path d="M11.795 21H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4" />
+                                            <path d="M14 18a4 4 0 1 0 8 0a4 4 0 1 0-8 0m1-15v4M7 3v4m-4 4h16" />
+                                            <path d="M18 16.496V18l1 1" />
+                                        </g>
+                                    </svg>
+                                    <small th:text="${event.startDate} + ' at ' + ${event.startTime}">Event Date and Time</small>
+                                </div>
+                                <div class="pt-2 mt-2 text-end">
+                                    <i class=""></i><strong class="text-md" th:text="${event.getSmallestTicketPrice()} + ' DT'">Event Smallest ticket price</strong>
+                                    <br/> <small>Starting from</small>
+
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
-

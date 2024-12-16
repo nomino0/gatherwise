@@ -15,7 +15,7 @@ public class EventTypeForm {
     @NotBlank
     @Size(min=4, max=20)
     private String typeName;
-
     @Size(max=255)
     private String description;
+    private String icon;
 }

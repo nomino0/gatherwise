@@ -1,56 +1,145 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
-    <title>Edit Person</title>
-    <script type="text/javascript"></script>
-    <link th:replace="layout/default-layout::link">
+    <title>Edit Event</title>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.css" rel="stylesheet">
+    <style>
+        #map {
+            width: 100%;
+            height: 500px;
+            margin-top: 20px;
+        }
+        .cover-photo {
+            width: 360px;
+            height: 180px;
+            object-fit: cover;
+
+        }
+    </style>
+    <script src="/js/google-maps-location-picker.js"></script>
+    <link th:replace="layout/admin-layout::link">
 </head>
 
-<body th:replace="layout/default-layout::body(title='Edit person')">
-    <div th:fragment="content">
-        <div class="mt-3 mb-4">
-            <a class="btn btn-primary" th:href="@{/persons}">Back</a>
-          </div>
-
-        <form th:action="@{|/persons/${id}/edit|}" th:object="${personForm}"
-               method="POST" enctype="multipart/form-data">
-            <div>
-                <label for="name" class="form-lablel mt-4">
-                    Name
-                </label>
-                <input type="text" class="form-control mt-2" name="name" th:classappend="${#fields.hasErrors('name')}?is-invalid"  th:field="*{name}">
-                <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="invalid-feedback">Name Error</span>
-            </div>
-            <div>
-                <label for="age" class="form-lablel mt-4">
-                    Age
-                </label>
-                <input type="number" class="form-control mt-2" th:classappend="${#fields.hasErrors('age')}?is-invalid" name="age" th:field="*{age}">
-                <span th:if="${#fields.hasErrors('age')}" th:errors="*{age}" class="invalid-feedback">Age Error</span>
-            </div>
-            <div>
-                <label  class="form-label mt-4" for="ageGroup">Age Group</label>
-                <select class="form-select" id="ageGroup" th:field="*{ageGroup}">
-                    <option value="" selected disabled>Choose Age Group</option>
-                    <option th:each="ageGroup : ${ageGroups}" th:value="${ageGroup.id}" th:text="${ageGroup.groupName}"></option>
-                </select>
-            </div>
-            <div>
-                <img th:src="${personForm.photo!=null}?@{|/images/${personForm.photo}|}:@{/images/default.png}" 
-                alt="photo"
-                class="img-rounded img-responsive"
-                style="max-height: 50px; max-width: 50px;">
-                <label class="form-lablel mt-4" for="file">Photo</label>
-                <input type="file" name="file" class="form-control mt-2">
-            </div>
-            <div class="mt-4">
-                <input class="btn btn-success" type="submit" value="Save">
-            </div>
-        </form>
+<body th:replace="layout/admin-layout::body(title='Edit Event', pathname='events')">
+<div th:fragment="content" th:with="pathname=${pathname}">
+    <div class="mt-3 mb-4">
+        <a class="btn btn-primary" th:href="@{/events}">Back</a>
     </div>
 
-</body>
+    <h5 class="mt-5">Event Details</h5>
 
+    <form th:action="@{|/events/${id}/edit|}" th:object="${eventForm}" method="POST" enctype="multipart/form-data">
+        <div>
+            <label for="title" class="form-label mt-2">Title</label>
+            <input type="text" class="form-control mt-2" id="title" name="title" th:classappend="${#fields.hasErrors('title')}? 'is-invalid'" th:field="*{title}" placeholder="Enter event title">
+            <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="invalid-feedback">Title Error</span>
+        </div>
+
+        <div>
+            <label class="form-label mt-4" for="eventType">Event Type</label>
+            <select class="form-select" id="eventType" th:classappend="${#fields.hasErrors('eventType')}? 'is-invalid'" th:field="*{eventType}" required>
+                <option value="" selected disabled>Choose Event Type</option>
+                <option th:each="eventType : ${eventTypes}" th:value="${eventType.id}" th:text="${eventType.typeName}"></option>
+            </select>
+            <span th:if="${#fields.hasErrors('eventType')}" th:errors="*{eventType}" class="invalid-feedback">Event Type Error</span>
+        </div>
+        <div>
+            <label for="description" class="form-label mt-4">Description</label>
+            <textarea class="form-control mt-2" id="description" name="description" th:classappend="${#fields.hasErrors('description')}? 'is-invalid'" th:field="*{description}" placeholder="Enter event description"></textarea>
+            <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="invalid-feedback">Description Error</span>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <label for="startDate" class="form-label mt-4">Start Date</label>
+                <input type="date" class="form-control mt-2" id="startDate" name="startDate" th:classappend="${#fields.hasErrors('startDate')}? 'is-invalid'" th:field="*{startDate}" placeholder="Select start date">
+                <span th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}" class="invalid-feedback">Start Date Error</span>
+            </div>
+            <div class="col-md-6">
+                <label for="endDate" class="form-label mt-4">End Date</label>
+                <input type="date" class="form-control mt-2" id="endDate" name="endDate" th:classappend="${#fields.hasErrors('endDate')}? 'is-invalid'" th:field="*{endDate}" placeholder="Select end date">
+                <span th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}" class="invalid-feedback">End Date Error</span>
+            </div>
+            <div class="col-md-6">
+                <label for="startTime" class="form-label mt-4">Start Time</label>
+                <input type="time" class="form-control mt-2" id="startTime" name="startTime" th:classappend="${#fields.hasErrors('startTime')}? 'is-invalid'" th:field="*{startTime}" placeholder="Select start time">
+                <span th:if="${#fields.hasErrors('startTime')}" th:errors="*{startTime}" class="invalid-feedback">Start Time Error</span>
+            </div>
+
+            <div class="col-md-6">
+                <label for="endTime" class="form-label mt-4">End Time</label>
+                <input type="time" class="form-control mt-2" id="endTime" name="endTime" th:classappend="${#fields.hasErrors('endTime')}? 'is-invalid'" th:field="*{endTime}" placeholder="Select end time">
+                <span th:if="${#fields.hasErrors('endTime')}" th:errors="*{endTime}" class="invalid-feedback">End Time Error</span>
+            </div>
+        </div>
+        <div>
+            <label for="coverPhotoFile" class="form-label mt-4">Cover Photo</label>
+            <div>
+                <img th:if="${eventForm.coverPhoto}" th:src="@{/images/{coverPhoto}(coverPhoto=${eventForm.coverPhoto})}" class="cover-photo rounded-4" alt="Cover Photo">
+                <span th:unless="${eventForm.coverPhoto}" class="invalid-feedback">No cover Image</span>
+            </div>
+            <input type="file" id="coverPhotoFile" name="coverPhotoFile" class="form-control mt-2">
+        </div>
+
+        <h5 class="mt-5">Location Details</h5>
+
+        <p class="mt-4">Use the map to select the location</p>
+        <div>
+            <div id="map"></div>
+            <script src="/js/google-maps-location-picker.js"></script>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <label for="locationName" class="form-label mt-4">Location Name</label>
+                <input type="text" class="form-control mt-2" id="locationName" name="locationName" th:classappend="${#fields.hasErrors('locationName')}? 'is-invalid'" th:field="*{locationName}" placeholder="Enter location name">
+                <span th:if="${#fields.hasErrors('locationName')}" th:errors="*{locationName}" class="invalid-feedback">Location Name Error</span>
+            </div>
+            <div class="col-md-8">
+                <label for="locationAddress" class="form-label mt-4">Location Address</label>
+                <input type="text" class="form-control mt-2" id="locationAddress" name="locationAddress" th:classappend="${#fields.hasErrors('locationAddress')}? 'is-invalid'" th:field="*{locationAddress}" placeholder="Enter location address">
+                <span th:if="${#fields.hasErrors('locationAddress')}" th:errors="*{locationAddress}" class="invalid-feedback">Location Address Error</span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <label for="locationPhone" class="form-label mt-4">Location Phone</label>
+                <input type="text" class="form-control mt-2" id="locationPhone" name="locationPhone" th:classappend="${#fields.hasErrors('locationPhone')}? 'is-invalid'" th:field="*{locationPhone}" placeholder="Enter location phone">
+                <span th:if="${#fields.hasErrors('locationPhone')}" th:errors="*{locationPhone}" class="invalid-feedback">Location Phone Error</span>
+                <label for="locationEmail" class="form-label mt-4">Location Email</label>
+                <input type="email" class="form-control mt-2" id="locationEmail" name="locationEmail" th:classappend="${#fields.hasErrors('locationEmail')}? 'is-invalid'" th:field="*{locationEmail}" placeholder="Enter location email">
+                <span th:if="${#fields.hasErrors('locationEmail')}" th:errors="*{locationEmail}" class="invalid-feedback">Location Email Error</span>
+            </div>
+            <div class="col-md-6">
+                <label for="locationLatitude" class="form-label mt-4">Location Latitude</label>
+                <input type="text" id="locationLatitude" class="form-control mt-2" name="locationLatitude" th:classappend="${#fields.hasErrors('locationLatitude')}? 'is-invalid'" th:field="*{locationLatitude}" placeholder="Enter location latitude">
+                <span th:if="${#fields.hasErrors('locationLatitude')}" th:errors="*{locationLatitude}" class="invalid-feedback">Location Latitude Error</span>
+                <label for="locationLongitude" class="form-label mt-4">Location Longitude</label>
+                <input type="text" id="locationLongitude" class="form-control mt-2" name="locationLongitude" th:classappend="${#fields.hasErrors('locationLongitude')}? 'is-invalid'" th:field="*{locationLongitude}" placeholder="Enter location longitude">
+                <span th:if="${#fields.hasErrors('locationLongitude')}" th:errors="*{locationLongitude}" class="invalid-feedback">Location Longitude Error</span>
+            </div>
+        </div>
+
+        <div>
+            <label for="isPublic" class="form-label mt-4">Is Public</label>
+            <input type="checkbox" id="isPublic" name="isPublic" th:classappend="${#fields.hasErrors('isPublic')}? 'is-invalid'" th:field="*{isPublic}">
+        </div>
+
+        <div>
+            <label for="isArchived" class="form-label mt-4">Is Archived</label>
+            <input type="checkbox" id="isArchived" name="isArchived" th:classappend="${#fields.hasErrors('isArchived')}? 'is-invalid'" th:field="*{isArchived}">
+        </div>
+
+       <div class="mt-4">
+           <span > If you want to edit the Tickets Details of this Event Please go to <a class="" href="/tickets//{id}/edit">Tickets Management</a></span>
+       </div>
+
+        <div class="mt-4">
+            <input class="btn btn-success" type="submit" value="Save">
+        </div>
+    </form>
+</div>
+</body>
 </html>

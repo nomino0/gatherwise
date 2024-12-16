@@ -1,5 +1,6 @@
 package com.tekup.gatherwise.web.models;
 
+import com.tekup.gatherwise.dao.entities.Event;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -23,5 +24,6 @@ public class TicketForm {
     @NotNull(message = "Quantity is required")
     @Min(value = 1, message = "Quantity must be at least 1")
     private int quantity;
+    private Event event;
     private Long eventId;
 }

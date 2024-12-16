@@ -64,6 +64,12 @@ public class EventServiceImpl implements EventService {
         return eventRepository.findByEventType(eventType);
     }
 
+
+    @Override
+    public Page<Event> getEventsByTitle(String title, Pageable pageable) {
+        return eventRepository.findByTitleContainingIgnoreCase(title, pageable);
+    }
+
     @Override
     public Page<Event> getEventsByPublicStatusPagination(Boolean isPublic, Pageable pageable) {
         return eventRepository.findByIsPublic(isPublic, pageable);

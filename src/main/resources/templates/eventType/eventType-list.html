@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Event Type List</title>
+  <link th:replace="layout/admin-layout::link"></link>
+</head>
+
+<body th:replace="layout/admin-layout::body(title='Event Type List')">
+<div th:fragment="content">
+  <div class="row mt-3 mb-5">
+    <div class="col-8">
+      <a class="btn btn-primary" th:href="@{/event-types/create}"> <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              width="20" height="20"
+
+      >
+        <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg>Add Event Type</a>
+    </div>
+    <div class="col-4">
+    </div>
+  </div>
+  <div class="rounded-2 overflow-hidden">
+  <table class="table table-hover " th:if="${!#lists.isEmpty(eventTypes)}">
+    <thead>
+    <tr class="table-dark">
+      <th>N°</th>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Icon</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tr th:each="eventType, state : ${eventTypes}" th:class="${state.even} ? 'table-light' : ''">
+      <td th:text="${state.count}"></td>
+      <td th:text="${eventType.typeName}"></td>
+      <td th:text="${eventType.description}"></td>
+      <td><img th:src="(${eventType.icon}?@{|/images/${eventType.icon}|}:@{'/images/default.png'})" alt="photo"
+               class="img-rounded img-responsive" style="max-height: 50px; max-width: 50px;">
+      <td>
+        <div class="row">
+          <form th:action="@{|/event-types/${eventType.id}/edit|}" method="get" class="col-4">
+            <input type="submit" value="Update" class="btn btn-success">
+          </form>
+          <form th:action="@{|/event-types/${eventType.id}/delete|}" method="post" class="col-8">
+            <input type="submit" value="Delete" class="btn btn-danger">
+          </form>
+        </div>
+      </td>
+    </tr>
+  </table>
+  </div>
+  <div class="alert alert-warning" th:if="${#lists.isEmpty(eventTypes)}">
+    No Event Type found!
+  </div>
+</div>
+</body>
+
+</html>

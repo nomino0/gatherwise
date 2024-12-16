@@ -23,12 +23,11 @@ public class Event {
     @Column(name="event_title",length = 30, nullable=false)
     private String title;
     private String description;
-    private int ticketsNumber;
+    private Date creationDate;
     private Date startDate;
     private Date endDate;
     private String startTime;
     private String endTime;
-    private Date creationDate;
     private String coverPhoto;
     private String locationName;
     private String locationAddress;
@@ -51,10 +50,11 @@ public class Event {
 
     private EventType eventType;
 
-    public Event(Long id, String title, String description, Date startDate, Date endDate, String startTime, String endTime, String coverPhoto, String locationName, String locationAddress, String locationLatitude, String locationLongitude, String locationPhone, String locationEmail, Boolean isPublic, Boolean isArchived) {
+    public Event(Long id, String title, String description, Date creationDate, Date startDate, Date endDate, String startTime, String endTime, String coverPhoto, String locationName, String locationAddress, String locationLatitude, String locationLongitude, String locationPhone, String locationEmail, Boolean isPublic, Boolean isArchived, EventType EventType) {
         this.id = id;
         this.title = title;
         this.description = description;
+        this.creationDate = creationDate;
         this.startDate = startDate;
         this.endDate = endDate;
         this.startTime = startTime;
@@ -68,7 +68,18 @@ public class Event {
         this.locationEmail = locationEmail;
         this.isPublic = isPublic;
         this.isArchived = isArchived;
-
+        this.eventType = EventType;
     }
 
+    public int getTotalTicketTypes() {
+        return tickets != null ? tickets.size() : 0;
+    }
+
+    public int getTotalTickets() {
+        return tickets != null ? tickets.stream().mapToInt(Ticket::getQuantity).sum() : 0;
+    }
+
+    public int getSmallestTicketPrice() {
+        return tickets != null && !tickets.isEmpty() ? tickets.stream().mapToInt(Ticket::getPrice).min().orElse(0) : 0;
+    }
 }

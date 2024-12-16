@@ -17,23 +17,30 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="btn text-start w-100" th:classappend="${page == 'events'} ? 'btn btn-light' : 'btn-secondary'" th:href="@{/events}">
-                    Event Management
-                </a>
-            </li>
-            <li class="nav-item">
                 <a class="btn text-start w-100" th:classappend="${page == 'event-types'} ? 'btn btn-light' : 'btn-secondary'" th:href="@{/event-types}">
-                    Event Type Management
+                    Categories Management
                 </a>
             </li>
+
+            <li class="nav-item">
+                <a class="btn text-start w-100" th:classappend="${page == 'events'} ? 'btn btn-light' : 'btn-secondary'" th:href="@{/events}">
+                    Events Management
+                </a>
+            </li>
+
             <li class="nav-item">
                 <a class="btn text-start w-100" th:classappend="${page == 'tickets'} ? 'btn btn-light' : 'btn-secondary'" th:href="@{/tickets}">
-                    Ticket Management
+                    Tickets Management
                 </a>
             </li>
             <li class="nav-item">
                 <a class="btn text-start w-100" th:classappend="${page == 'reservations'} ? 'btn-outline-primary' : 'btn-secondary'" th:href="@{/reservations}">
-                    Reservation Management
+                    Reservations Management
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="btn text-start w-100" th:classappend="${page == 'requests'} ? 'btn-outline-primary' : 'btn-secondary'" th:href="@{/requests}">
+                    Requests Management
                 </a>
             </li>
         </ul>
