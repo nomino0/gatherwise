@@ -32,4 +32,8 @@ public interface EventService {
 
     // Delete
     void deleteEventById(Long id);
+
+    List<Event> getEventsByType(EventType eventType);
+
+    Event getEventByNameAndType(String eventName, EventType eventType);
 }

@@ -66,4 +66,14 @@ public class EventTypeServiceImpl implements EventTypeService {
         existingEventType.setDescription(eventType.getDescription());
         return eventTypeRepository.save(existingEventType);
     }
+
+    @Override
+    public EventType getEventTypeByName(String typeName) {
+        if(typeName == null){
+            return null;
+        }
+        return (EventType) this.eventTypeRepository
+                .findByTypeName(typeName)
+                .orElseThrow(() -> new EntityNotFoundException("Event Type with name: " + typeName + " not found"));
+    }
 }

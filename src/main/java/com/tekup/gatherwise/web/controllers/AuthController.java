@@ -23,7 +23,7 @@ public class AuthController {
     public String getAccessDeniedPage(Model model) {
      
         model.addAttribute("error", "You are not allowed to access this page");
-        return "errors";
+        return "error";
     }
 
     

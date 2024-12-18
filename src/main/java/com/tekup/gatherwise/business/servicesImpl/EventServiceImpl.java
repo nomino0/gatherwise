@@ -105,4 +105,16 @@ public class EventServiceImpl implements EventService {
         eventRepository.deleteById(id);
     }
 
+    @Override
+    public List<Event> getEventsByType(EventType eventType) {
+        return eventRepository.findByEventType(eventType);
+    }
+
+    @Override
+    public Event getEventByNameAndType(String eventName, EventType eventType) {
+        return eventRepository.findByTitleAndEventType(eventName, eventType);
+    }
+
+
+
 }

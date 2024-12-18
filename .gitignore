@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+# Ignore the config.js file containing the API key
+src/main/resources/static/js/config.js

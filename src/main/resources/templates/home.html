@@ -5,7 +5,11 @@
     <title>Home</title>
     <script type="text/javascript"></script>
     <link th:replace="layout/default-layout::link">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
+        body {
+            background-color: #F9F9F9;
+        }
         .video-background {
             position: absolute;
             top: 0;
@@ -20,11 +24,10 @@
             position: relative;
             display: flex;
             justify-content: center;
-
             text-align: left;
             color: white;
             padding: 20px;
-            height: 600px; /* Increased height */
+            height: 600px;
         }
         .header-content h1 {
             font-size: 2em;
@@ -35,27 +38,45 @@
         .header-content p {
             font-size: 1em;
         }
-        .event-card:hover img {
-            transform: scale(1.1);
+        .event-type-icon {
+            width: 24px;
+            color: #22272b;
+        }
+        .event-type-text {
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: #22272b;
         }
 
-        .event-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+
+        .custom-card {
+            height: 200px;
+
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
-        }
-        .event-card:hover img {
-            transform: scale(1.1);
+            position: relative;
         }
         .gradient-bg {
             position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
-            background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1));
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 50));
             color: white;
-            padding: 10px;
+            padding: 20px 10px 10px;
+            display: flex;
+            flex-direction: row;
+        }
+        .event-cover {
+            object-fit: cover;
+            height: 100%;
+            width: 100%;
+            transition: transform 0.3s ease;
+        }
+        .custom-card:hover .event-cover {
+            transform: scale(1.05);
         }
     </style>
 </head>
@@ -69,40 +90,30 @@
         <div class="container my-auto">
             <h1>GatherWise</h1>
             <h3>We Gather for Good!</h3>
-            <p>Small description goes here</p>
+            <p>Effortless event connections.</p>
         </div>
     </div>
     <div class="container my-5">
-        <div class="mb-2">
-            <h5><span class="text-primary-emphasis">Explore ongoing Events:</span></h5>
+        <div class="mb-4 d-flex justify-content-between">
+            <h4><span class="text-primary-emphasis">Explore ongoing Events:</span></h4>
+            <a class="text-black" href="/explore">Explore All</a>
         </div>
-        <div class="row ps-4 pe-4 pt-2" th:each="eventType : ${eventTypes}">
-            <div class="col-md-12 mb-4">
-                <h5 th:text="${eventType.typeName} +':'">Event Type</h5>
+        <div class="row" th:each="eventType : ${eventTypes}">
+            <div class="col-md-12 mb-3 d-flex align-items-center">
+                <img th:if="${eventType.icon}" th:src="@{/images/{icon}(icon=${eventType.icon})}" class="event-type-icon me-2" alt="Event type icon">
+                <span th:text="${eventType.typeName} +':'" class="event-type-text">Event Type</span>
             </div>
-            <div class="col-md-4 mb-4 zoomIn" th:each="event : ${eventType.events}">
-                <div class="card h-120 w-140">
-                    <div class="card-img-top position-relative ">
+            <div class="col-lg-4 col-md-6 col-sm-12 mb-4" th:each="event : ${eventType.events}">
+                <div class="custom-card">
+                    <div class="position-relative h-100">
                         <a th:href="@{/event/${event.id}}">
-                            <img th:if="${event.coverPhoto}"  th:src="@{/images/{coverPhoto}(coverPhoto=${event.coverPhoto})}" class="img-fluid" alt="Event Cover">
+                            <img th:if="${event.coverPhoto}" th:src="@{/images/{coverPhoto}(coverPhoto=${event.coverPhoto})}" class="img-fluid event-cover" alt="Event Cover">
                             <span th:unless="${event.coverPhoto}" class="invalid-feedback">No cover Image</span>
-                            <div class="gradient-bg d-flex justify-content-between">
-                                <div class="pt-2 mt-2 ">
-                                    <h6 class="card-title" th:text="${event.title}"> Title </h6>
-                                    <svg
-                                            role="img"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 24 24"
-                                            width="20px"
-                                            height="20px"
-                                    >
-                                        <g
-                                                fill="none"
-                                                stroke="#ffffff"
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                stroke-width="2"
-                                        >
+                            <div class="gradient-bg gap-1 d-flex justify-content-between">
+                                <div class="align-items-end">
+                                    <h6 th:text="${event.title}">Title</h6>
+                                    <svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20px" height="20px">
+                                        <g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
                                             <path d="M11.795 21H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4" />
                                             <path d="M14 18a4 4 0 1 0 8 0a4 4 0 1 0-8 0m1-15v4M7 3v4m-4 4h16" />
                                             <path d="M18 16.496V18l1 1" />
@@ -110,10 +121,10 @@
                                     </svg>
                                     <small th:text="${event.startDate} + ' at ' + ${event.startTime}">Event Date and Time</small>
                                 </div>
-                                <div class="pt-2 mt-2 text-end">
-                                    <i class=""></i><strong class="text-md" th:text="${event.getSmallestTicketPrice()} + ' DT'">Event Smallest ticket price</strong>
-                                    <br/> <small>Starting from</small>
-
+                                <div class="text-end align-items-end mt-auto">
+                                    <i></i>
+                                    <strong class="text-md" th:text="${event.getSmallestTicketPrice()} + ' DT'">Event Smallest ticket price</strong> <br/>
+                                    <small>Starting from</small>
                                 </div>
                             </div>
                         </a>

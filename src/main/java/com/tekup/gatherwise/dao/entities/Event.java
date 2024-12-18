@@ -20,7 +20,7 @@ public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name="event_title",length = 30, nullable=false)
+    @Column(name="event_title", nullable=false)
     private String title;
     private String description;
     private Date creationDate;

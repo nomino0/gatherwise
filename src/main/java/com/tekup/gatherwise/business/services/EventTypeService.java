@@ -10,4 +10,6 @@ public interface EventTypeService {
     List<EventType> getAllEventTypes();
     void deleteEventType(Long id);
     EventType updateEventType(Long id, EventType eventType);
+
+    EventType getEventTypeByName(String typeName);
 }

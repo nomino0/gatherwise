@@ -26,7 +26,7 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/home", "/webjars/**", "/images/**")
+                        .requestMatchers("/", "/home", "/faq", "/error", "/about", "/explore/**" , "/webjars/**", "/images/**")
                         .permitAll()
                         .anyRequest().authenticated() // All endpoints require authentication
                 )
@@ -36,8 +36,8 @@ public class WebSecurityConfig {
                         .successHandler((request, response, authentication) -> {
                             // Check if the user has the "ADMIN" role
                             if (authentication.getAuthorities().stream()
-                                    .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"))) {
-                                response.sendRedirect("/admin/dashboard"); // Redirect to admin dashboard
+                                    .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("admin"))) {
+                                response.sendRedirect("/dashboard"); // Redirect to admin dashboard
                             } else {
                                 // Default behavior
                                 var savedRequest = (org.springframework.security.web.savedrequest.DefaultSavedRequest) request

@@ -128,6 +128,7 @@ public class EventController {
                            Model model,
                            @RequestParam MultipartFile coverPhotoFile) {
         if (bindingResult.hasErrors()) {
+            model.addAttribute("eventTypes", eventTypeService.getAllEventTypes());
             model.addAttribute("error", "Invalid input");
             return "event/add-event";
         }

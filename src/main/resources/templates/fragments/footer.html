@@ -1,17 +1,108 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-<script type="text/javascript"></script>
+    <meta charset="UTF-8">
+    <title>Insert title here</title>
+    <script type="text/javascript"></script>
 </head>
 <body>
-    <footer class="mt-5">
-        <p class="text-center">
-          &copy; <span th:text="${#dates.year(#dates.createNow())}"></span> GatherWise. All rights reserved
-        </p>
-        <script th:src="@{/webjars/popper.js/umd/popper.min.js}"></script>
-        <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
-      </footer>
+<footer class="bg-dark text-white mt-5">
+    <div class="container py-4">
+        <div class="row py-4">
+            <div class="col-3">
+                <a href="/" class="text-white"> <h5>GatherWise</h5> </a>
+                <p>We gather for Good</p>
+                <section class="mb-4 mt-4">
+
+                </section>
+            </div>
+            <div class="col-2 text-md">
+                <ul class="nav flex-column">
+                    <h6 class="text-uppercase">Top Events:</h6>
+                    <th:block th:each="eventType : ${topEventTypes}">
+                       <li class="nav-item "> <a class="nav-link text-white" th:href="@{/explore/{id}(id=${eventType.id})}" th:text="${eventType.typeName}">Event Type</a> </li>
+                    </th:block>
+                </ul>
+            </div>
+            <div class="col-2 text-md">
+                <ul class="nav flex-column">
+                    <h6 class="text-uppercase">Quick Links:</h6>
+                    <li class="nav-item "><a href="/request" class="nav-link text-white">Request Event</a></li>
+                    <li class="nav-item "><a href="/faq" class="nav-link text-white">FAQ</a></li>
+                    <li class="nav-item "><a href="/about" class="nav-link text-white">About Us</a></li>
+
+                </ul>
+
+            </div>
+            <div class="col-4 offset-1">
+                <form>
+                    <h5>Subscribe to our newsletter</h5>
+                    <p>Monthly digest of whats new and exciting from us.</p>
+                    <div class="d-flex w-100 gap-2">
+                        <label for="newsletter1" class="visually-hidden">Email address</label>
+                        <input id="newsletter1" type="text" class="form-control" placeholder="Email address">
+                        <button class="btn btn-primary" type="button">Subscribe</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class=" border-top container p-2 ">
+        <div class="d-flex justify-content-between pt-2">
+            <p>&copy; <span th:text="${#dates.year(#dates.createNow())}"></span> GatherWise. All rights reserved.</p>
+            <ul class="text-white d-flex">
+                <li class="ms-3"><a class="link-dark" href="https://www.linkedin.com/in/aminemayoufi/">
+                    <svg
+                            role="img"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            width="24px"
+                            height="24px"
+                    >
+                        <path
+                                fill="#ffffff"
+                                d="M8 19H5V9h3zm11 0h-3v-5.342c0-1.392-.496-2.085-1.479-2.085c-.779 0-1.273.388-1.521 1.165V19h-3s.04-9 0-10h2.368l.183 2h.062c.615-1 1.598-1.678 2.946-1.678c1.025 0 1.854.285 2.487 1.001c.637.717.954 1.679.954 3.03z"
+                        />
+                        <ellipse cx="6.5" cy="6.5" fill="#ffffff" rx="1.55" ry="1.5" />
+                    </svg>
+
+                </a></li>
+
+                <li class="ms-3"><a class="link-dark" href="#">
+                    <svg
+                        role="img"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        width="24px"
+                        height="24px"
+                >
+                    <path
+                            fill="#ffffff"
+                            d="M9.198 21.5h4v-8.01h3.604l.396-3.98h-4V7.5a1 1 0 0 1 1-1h3v-4h-3a5 5 0 0 0-5 5v2.01h-2l-.396 3.98h2.396z"
+                    />
+                </svg>
+                </a></li>
+                <li class="ms-3"><a class="link-dark" href="#">
+                    <svg
+                            role="img"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 1024 1024"
+                            width="24px"
+                            height="24px"
+                    >
+                        <path
+                                fill="#ffffff"
+                                d="M512 378.7c-73.4 0-133.3 59.9-133.3 133.3S438.6 645.3 512 645.3S645.3 585.4 645.3 512S585.4 378.7 512 378.7M911.8 512c0-55.2.5-109.9-2.6-165c-3.1-64-17.7-120.8-64.5-167.6c-46.9-46.9-103.6-61.4-167.6-64.5c-55.2-3.1-109.9-2.6-165-2.6c-55.2 0-109.9-.5-165 2.6c-64 3.1-120.8 17.7-167.6 64.5C132.6 226.3 118.1 283 115 347c-3.1 55.2-2.6 109.9-2.6 165s-.5 109.9 2.6 165c3.1 64 17.7 120.8 64.5 167.6c46.9 46.9 103.6 61.4 167.6 64.5c55.2 3.1 109.9 2.6 165 2.6c55.2 0 109.9.5 165-2.6c64-3.1 120.8-17.7 167.6-64.5c46.9-46.9 61.4-103.6 64.5-167.6c3.2-55.1 2.6-109.8 2.6-165M512 717.1c-113.5 0-205.1-91.6-205.1-205.1S398.5 306.9 512 306.9S717.1 398.5 717.1 512S625.5 717.1 512 717.1m213.5-370.7c-26.5 0-47.9-21.4-47.9-47.9s21.4-47.9 47.9-47.9s47.9 21.4 47.9 47.9a47.84 47.84 0 0 1-47.9 47.9"
+                        />
+                    </svg>
+
+                </a></li>
+            </ul>
+        </div>
+
+    </div>
+    <script th:src="@{/webjars/popper.js/umd/popper.min.js}"></script>
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+</footer>
 </body>
 </html>
