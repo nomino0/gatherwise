@@ -1,6 +1,7 @@
 package com.tekup.gatherwise.business.services;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +24,8 @@ public interface EventService {
     Page<Event> getEventsByArchiveStatusPagination(Boolean isArchived, Pageable pageable);
     Page<Event> getEventsByEventTypePagination(EventType eventType, Pageable pageable);
     Page<Event> getEventsByPublicStatusAndEventTypePagination(Boolean isPublic, EventType eventType, Pageable pageable);
+
+    Map<Event, Long> getEventReservationCounts();
 
     // Create
     Event addEvent(Event event);

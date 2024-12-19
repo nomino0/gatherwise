@@ -1,5 +1,6 @@
 package com.tekup.gatherwise.dao.entities;
 
+import com.tekup.gatherwise.business.services.TicketService;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -81,5 +82,19 @@ public class Event {
 
     public int getSmallestTicketPrice() {
         return tickets != null && !tickets.isEmpty() ? tickets.stream().mapToInt(Ticket::getPrice).min().orElse(0) : 0;
+    }
+
+    public int getTotalSoldTickets(TicketService ticketService) {
+        return tickets != null ? tickets.stream().mapToInt(ticketService::getSoldCount).sum() : 0;
+    }
+
+    public String getDuration() {
+        long durationInMillis = endDate.getTime() - startDate.getTime();
+        long durationInDays = durationInMillis / (1000 * 60 * 60 * 24);
+        if (durationInDays < 1) {
+            return "Less than a day";
+        } else {
+            return durationInDays + " days";
+        }
     }
 }

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${event.title}">Event Details</title>
+    <link th:replace="layout/default-layout::link">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #F9F9F9;
+        }
+        .header-content {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: left;
+            color: white;
+            padding: 20px;
+            height: 340px;
+            background-image: url('/images/archive.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+        .header-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+        .header-content > * {
+            position: relative;
+            z-index: 2;
+        }
+        .header-content h1 {
+            font-size: 2em;
+        }
+        .header-content h3 {
+            font-size: 5em;
+        }
+        .header-content p {
+            font-size: 1em;
+        }
+        .event-type-icon {
+            width: 24px;
+            color: #22272b;
+        }
+        .event-type-text {
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: #22272b;
+        }
+        .custom-card {
+            height: 200px;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+        .gradient-bg {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 50));
+            color: white;
+            padding: 20px 10px 10px;
+            display: flex;
+            flex-direction: row;
+        }
+        .event-cover {
+            object-fit: cover;
+            height: 100%;
+            width: 100%;
+            transition: transform 0.3s ease;
+        }
+        .custom-card:hover .event-cover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body th:replace="layout/default-layout::body(title='Event Details')">
+<div th:fragment="content">
+    <div class="header-content" th:style="'background-image: url(/images/' + ${event.coverPhoto} + ');'">
+        <div class="container">
+            <h1 class="display-4" th:text="${event.title}">Event Title</h1>
+            <p class="lead" th:text="${event.startDate} + ' at ' + ${event.startTime}">Event Date and Time</p>
+            <p th:text="${event.description}">Event Description</p>
+        </div>
+    </div>
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-md-8">
+                <h4>Event Details</h4>
+                <p><strong>Location:</strong> <span th:text="${event.locationName} + ', ' + ${event.locationAddress}">Event Location</span></p>
+                <p><strong>Duration:</strong> <span th:text="${event.getDuration()}">Event Duration</span></p>
+                <div id="map" class="map-container" style="height: 300px;"></div>
+            </div>
+            <div class="col-md-4">
+                <h4>Tickets</h4>
+                <form method="post" action="/checkout">
+                    <div class="form-group" th:each="ticket : ${tickets}">
+                        <label th:text="${ticket.ticketType} + ' - ' + ${ticket.price} + ' DT'">Ticket Type</label>
+                        <div class="input-group input-group-sm mb-3">
+                            <input type="number" class="form-control form-control-range " aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success mt-3">Buy Tickets</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function initMap() {
+        var eventLocation = { lat: parseFloat([[${event.locationLatitude}]]), lng: parseFloat([[${event.locationLongitude}]]) };
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 15,
+            center: eventLocation
+        });
+        var marker = new google.maps.Marker({
+            position: eventLocation,
+            map: map
+        });
+    }
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
+</body>
+</html>
