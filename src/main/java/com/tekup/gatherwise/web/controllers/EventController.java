@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
@@ -85,14 +86,15 @@ public class EventController {
         model.addAttribute("eventTypes", eventTypeService.getAllEventTypes());
 
         Sort.Direction direction = "desc".equalsIgnoreCase(order) ? Sort.Direction.DESC : Sort.Direction.ASC;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy != null ? sortBy : "startDate"));
+        Sort sort = Sort.by(direction, sortBy != null ? sortBy : "startDate");
+        Pageable pageable = PageRequest.of(page, size, sort);
 
         Page<Event> eventPage;
         if (search != null && !search.isEmpty()) {
             eventPage = eventService.getEventsByTitle(search, pageable);
-        } else if (isPublic != null && isArchived != null && eventTypeId != null) {
+        } else if (isPublic != null && eventTypeId != null) {
             eventPage = eventService.getEventsByPublicStatusAndEventTypePagination(isPublic, new EventType(eventTypeId), pageable);
-        } else if (isPublic != null && isArchived != null) {
+        } else if (isPublic != null) {
             eventPage = eventService.getEventsByPublicStatusPagination(isPublic, pageable);
         } else if (isArchived != null) {
             eventPage = eventService.getEventsByArchiveStatusPagination(isArchived, pageable);
@@ -105,12 +107,13 @@ public class EventController {
         model.addAttribute("events", eventPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", eventPage.getTotalPages());
+        model.addAttribute("pageSize", size);
         model.addAttribute("sortBy", sortBy);
         model.addAttribute("order", order);
         model.addAttribute("isPublic", isPublic);
         model.addAttribute("isArchived", isArchived);
-        model.addAttribute("eventTypeId", eventTypeId);
         model.addAttribute("search", search);
+        model.addAttribute("eventTypeId", eventTypeId);
 
         return "event/event-list";
     }
@@ -249,5 +252,6 @@ public class EventController {
         eventService.deleteEventById(id);
         return "redirect:/events";
     }
+
 
 }

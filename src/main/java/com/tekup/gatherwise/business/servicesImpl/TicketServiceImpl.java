@@ -1,7 +1,9 @@
 package com.tekup.gatherwise.business.servicesImpl;
 
 import com.tekup.gatherwise.business.services.TicketService;
+import com.tekup.gatherwise.dao.entities.Reservation;
 import com.tekup.gatherwise.dao.entities.Ticket;
+import com.tekup.gatherwise.dao.repositories.ReservationRepository;
 import com.tekup.gatherwise.dao.repositories.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -54,5 +56,16 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public void deleteTicketById(Long id) {
         ticketRepository.deleteById(id);
+    }
+
+
+    @Autowired
+    private ReservationRepository reservationRepository;
+
+
+    @Override
+    public int getSoldCount(Ticket ticket) {
+        List<Reservation> reservations = reservationRepository.findByTicket(ticket);
+        return reservations.size();
     }
 }

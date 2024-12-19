@@ -1,9 +1,9 @@
 // google-maps-location-picker.js
-import config from './config.js';
+const apiKey = 'AIzaSyDwpdbpoSJ2VVW1IIhhQGFvF0PFdjYBliM';
 
 function loadGoogleMapsApi(callback) {
     const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${config.apiKey}&libraries=places&callback=${callback}`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=${callback}`;
     script.async = true;
     script.defer = true;
     document.head.appendChild(script);

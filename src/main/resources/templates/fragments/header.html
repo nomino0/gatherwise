@@ -48,10 +48,9 @@
                         <div class="dropdown-menu">
                             <span class="dropdown-item-text">Trending Now</span>
                             <th:block th:each="eventType : ${topEventTypes}">
-                                <a class="dropdown-item" th:href="@{/events/{id}(id=${eventType.id})}" th:text="${eventType.typeName}">Event Type</a>
-                            </th:block>
+                                <a class="dropdown-item" th:href="@{|/explore?category=${eventType.id}|}" th:text="${eventType.typeName}">Event Type</a>                            </th:block>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#">Explore All the Categories</a>
+                            <a class="dropdown-item" href="/explore">Explore All the Categories</a>
                         </div>
                     </li>
                     <li class="nav-item">

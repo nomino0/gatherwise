@@ -15,4 +15,6 @@ public interface TicketService {
     Ticket addTicket(Ticket ticket);
     Ticket updateTicket(Ticket ticket);
     void deleteTicketById(Long id);
+    int getSoldCount(Ticket ticket);
+
 }

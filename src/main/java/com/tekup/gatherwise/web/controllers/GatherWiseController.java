@@ -2,18 +2,18 @@ package com.tekup.gatherwise.web.controllers;
 
 import com.tekup.gatherwise.business.services.EventService;
 import com.tekup.gatherwise.business.services.EventTypeService;
+import com.tekup.gatherwise.business.services.TicketService;
 import com.tekup.gatherwise.dao.entities.Event;
 import com.tekup.gatherwise.dao.entities.EventType;
+import com.tekup.gatherwise.dao.entities.Ticket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
@@ -24,23 +24,30 @@ public class GatherWiseController {
 
     @Autowired
     private EventTypeService eventTypeService;
+    @Autowired
+    private TicketController ticketController;
 
+    //for home page
     @GetMapping({"/", "/home"})
     public String getHomePage(Model model) {
+        Map<Event, Long> eventReservationCounts = eventService.getEventReservationCounts();
+
         List<Event> events = eventService.getAllEvents().stream()
                 .filter(event -> event.getIsPublic() && !event.getIsArchived())
                 .collect(Collectors.toList());
+
 
         List<EventType> eventTypes = eventTypeService.getAllEventTypes().stream()
                 .filter(eventType -> eventType.getEvents().stream()
                         .anyMatch(event -> event.getIsPublic() && !event.getIsArchived()))
                 .collect(Collectors.toList());
 
-
         model.addAttribute("events", events);
         model.addAttribute("eventTypes", eventTypes);
         return "home";
     }
+
+    //for faq page
 
     @GetMapping("/faq")
     public String getFaqPage(Model model) {
@@ -53,13 +60,66 @@ public class GatherWiseController {
         return "faq";
     }
 
+
+    //for explore page
+
     @GetMapping("/explore")
-    public String getExplorePage(Model model) {
-        List<EventType> eventTypes = eventTypeService.getAllEventTypes();
+    public String getExplorePage(@RequestParam(value = "query", required = false) String query,
+                                 @RequestParam(value = "category", required = false) Long categoryId,
+                                 @RequestParam(value = "sort", required = false, defaultValue = "1") int sort,
+                                 Model model) {
+        List<Event> events = eventService.getAllEvents().stream()
+                .filter(event -> event.getIsPublic() && !event.getIsArchived())
+                .filter(event -> (query == null || event.getTitle().toLowerCase().contains(query.toLowerCase())))
+                .filter(event -> (categoryId == null || event.getEventType().getId().equals(categoryId)))
+                .sorted(getComparator(sort))
+                .collect(Collectors.toList());
+
+        Map<EventType, List<Event>> eventsByType = events.stream()
+                .collect(Collectors.groupingBy(Event::getEventType));
+
+        List<EventType> eventTypes = eventTypeService.getAllEventTypes().stream()
+                .filter(eventType -> eventsByType.containsKey(eventType))
+                .collect(Collectors.toList());
+
+        model.addAttribute("eventsByType", eventsByType);
         model.addAttribute("eventTypes", eventTypes);
+        model.addAttribute("query", query);
+        model.addAttribute("categoryId", categoryId);
+        model.addAttribute("sort", sort);
         return "explore";
     }
 
+    private Comparator<Event> getComparator(int sort) {
+        return switch (sort) {
+            case 2 -> Comparator.comparing(Event::getSmallestTicketPrice);
+            case 3 -> Comparator.comparing(Event::getSmallestTicketPrice).reversed();
+            default -> Comparator.comparing(Event::getStartDate).thenComparing(Event::getStartTime);
+        };
+    }
+
+    @GetMapping("/search-explore")
+    public String searchExploreEvents(@RequestParam(value = "query", required = false) String query,
+                                      @RequestParam(value = "category", required = false) Long categoryId,
+                                      @RequestParam(value = "sort", required = false, defaultValue = "1") int sort,
+                                      Model model) {
+        List<Event> events = eventService.getAllEvents().stream()
+                .filter(event -> event.getIsPublic() && !event.getIsArchived())
+                .filter(event -> (query == null || event.getTitle().toLowerCase().contains(query.toLowerCase())))
+                .filter(event -> (categoryId == null || event.getEventType().getId().equals(categoryId)))
+                .sorted(getComparator(sort))
+                .collect(Collectors.toList());
+
+        List<EventType> eventTypes = eventTypeService.getAllEventTypes();
+        model.addAttribute("events", events);
+        model.addAttribute("eventTypes", eventTypes);
+        model.addAttribute("query", query);
+        model.addAttribute("categoryId", categoryId);
+        model.addAttribute("sort", sort);
+        return "explore";
+    }
+
+    //for archive page
     @GetMapping("/explore/archive")
     public String getArchivePage(@RequestParam(value = "query", required = false) String query,
                                  @RequestParam(value = "category", required = false) Long categoryId,
@@ -83,7 +143,7 @@ public class GatherWiseController {
         return "archive";
     }
 
-    @GetMapping("/search")
+    @GetMapping("/search-archive")
     public String searchArchivedEvents(@RequestParam(value = "query", required = false) String query,
                                        @RequestParam(value = "category", required = false) Long categoryId,
                                        Model model) {
@@ -97,24 +157,6 @@ public class GatherWiseController {
         model.addAttribute("archivedEvents", archivedEvents);
         model.addAttribute("eventTypes", eventTypes);
         return "archive";
-    }
-
-    @GetMapping("/explore/{typeName}")
-    public String getEventsByType(@PathVariable String typeName, Model model) {
-        EventType eventType = eventTypeService.getEventTypeByName(typeName);
-        List<Event> events = eventService.getEventsByType(eventType);
-        model.addAttribute("events", events);
-        model.addAttribute("eventType", eventType);
-        return "events-by-type";
-    }
-
-    @GetMapping("/explore/{typeName}/{eventName}")
-    public String getEventDetails(@PathVariable String typeName, @PathVariable String eventName, Model model) {
-        EventType eventType = eventTypeService.getEventTypeByName(typeName);
-        Event event = eventService.getEventByNameAndType(eventName, eventType);
-        model.addAttribute("event", event);
-        model.addAttribute("eventType", eventType);
-        return "event-details";
     }
 
 
@@ -137,5 +179,31 @@ public class GatherWiseController {
 
         model.addAttribute("archivedEvents", archivedEvents);
         model.addAttribute("topEventTypes", topEventTypes);
+    }
+
+
+
+    @Autowired
+    private TicketService ticketService;
+
+    @GetMapping("/explore/{id}")
+    public String getEventDetails(@PathVariable Long id, Model model) {
+        // Fetch event details
+        Event event = eventService.getEventById(id);
+        if (event == null) {
+            return "error"; // Return an error page if the event is not found
+        }
+
+        // Fetch ticket details
+        List<Ticket> tickets = ticketService.getTicketsByEventId(id);
+        Map<Long, Integer> ticketQuantities = tickets.stream()
+                .collect(Collectors.toMap(Ticket::getId, ticket -> 0));
+
+        // Add attributes to the model
+        model.addAttribute("event", event);
+        model.addAttribute("tickets", tickets);
+        model.addAttribute("ticketQuantities", ticketQuantities);
+
+        return "event-details";
     }
 }

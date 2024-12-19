@@ -11,4 +11,5 @@ import com.tekup.gatherwise.dao.entities.Ticket;
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
     List<Ticket> findByTicketTypeContaining(String ticketType);
     Page<Ticket> findByEventId(Long eventId, Pageable pageable);
+
 }

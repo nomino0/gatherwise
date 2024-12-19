@@ -1,7 +1,13 @@
 package com.tekup.gatherwise.business.servicesImpl;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import com.tekup.gatherwise.dao.entities.Reservation;
+import com.tekup.gatherwise.dao.entities.Ticket;
+import com.tekup.gatherwise.dao.repositories.ReservationRepository;
+import com.tekup.gatherwise.dao.repositories.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -113,6 +119,16 @@ public class EventServiceImpl implements EventService {
     @Override
     public Event getEventByNameAndType(String eventName, EventType eventType) {
         return eventRepository.findByTitleAndEventType(eventName, eventType);
+    }
+
+    @Autowired
+    private ReservationRepository reservationRepository;
+
+    @Override
+    public Map<Event, Long> getEventReservationCounts() {
+        List<Reservation> reservations = reservationRepository.findAll();
+        return reservations.stream()
+                .collect(Collectors.groupingBy(reservation -> reservation.getTicket().getEvent(), Collectors.counting()));
     }
 
 

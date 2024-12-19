@@ -1,6 +1,8 @@
 package com.tekup.gatherwise.web.controllers;
 
+import com.tekup.gatherwise.business.services.ReservationService;
 import com.tekup.gatherwise.dao.entities.EventType;
+import com.tekup.gatherwise.dao.entities.Reservation;
 import com.tekup.gatherwise.dao.entities.Ticket;
 import com.tekup.gatherwise.web.models.TicketForm;
 import org.slf4j.Logger;
@@ -48,6 +50,10 @@ public class TicketController {
     @Autowired
     private TicketService ticketService;
 
+
+    @Autowired
+    private ReservationService reservationService;
+
     @GetMapping("")
     public String listEvents(@RequestParam(defaultValue = "0") int page,
                              @RequestParam(defaultValue = "4") int pageSize,
@@ -67,6 +73,7 @@ public class TicketController {
         model.addAttribute("order", order);
         model.addAttribute("isPublic", isPublic);
         model.addAttribute("isArchived", isArchived);
+        model.addAttribute("ticketService", ticketService); // Add this line
 
         return "ticket/event-list";
     }
@@ -91,40 +98,39 @@ public class TicketController {
         Page<Event> eventPage;
         if (search != null && !search.isEmpty()) {
             eventPage = eventService.getEventsByTitle(search, pageable);
-        } else if (isPublic != null && isArchived != null && eventTypeId != null) {
-            eventPage = eventService.getEventsByPublicStatusAndEventTypePagination(isPublic, new EventType(eventTypeId), pageable);
-        } else if (isPublic != null && isArchived != null) {
-            eventPage = eventService.getEventsByPublicStatusPagination(isPublic, pageable);
-        } else if (isArchived != null) {
-            eventPage = eventService.getEventsByArchiveStatusPagination(isArchived, pageable);
-        } else if (eventTypeId != null) {
-            eventPage = eventService.getEventsByEventTypePagination(new EventType(eventTypeId), pageable);
         } else {
             eventPage = eventService.getAllEventsPagination(pageable);
         }
 
         model.addAttribute("events", eventPage.getContent());
+        model.addAttribute("pageSize", size);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", eventPage.getTotalPages());
         model.addAttribute("sortBy", sortBy);
         model.addAttribute("order", order);
         model.addAttribute("isPublic", isPublic);
         model.addAttribute("isArchived", isArchived);
-        model.addAttribute("eventTypeId", eventTypeId);
         model.addAttribute("search", search);
 
         return "ticket/event-list";
     }
 
 
+
+
     @GetMapping("/{id}/list")
     public String listTickets(@PathVariable Long id, Model model) {
         List<Ticket> tickets = ticketService.getTicketsByEventId(id);
-        Event event = eventService.getEventById(id); // Assuming you have an EventService to fetch event details
+        Event event = eventService.getEventById(id);
+
         model.addAttribute("tickets", tickets);
-        model.addAttribute("eventName", event.getTitle()); // Add event name to the model
+        model.addAttribute("eventName", event.getTitle());
+        model.addAttribute("ticketService", ticketService); // Add this line
+
         return "ticket/ticket-list";
     }
+
+
 
 
     @GetMapping("/{id}/edit")

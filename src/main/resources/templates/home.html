@@ -38,26 +38,7 @@
         .header-content p {
             font-size: 1em;
         }
-        .event-type-icon {
-            width: 24px;
-            color: #22272b;
-        }
-        .event-type-text {
-            font-weight: 600;
-            font-size: 1.2rem;
-            color: #22272b;
-        }
 
-
-        .custom-card {
-            height: 200px;
-
-            border-radius: 4px;
-            overflow: hidden;
-            box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-            position: relative;
-        }
         .gradient-bg {
             position: absolute;
             bottom: 0;
@@ -75,8 +56,22 @@
             width: 100%;
             transition: transform 0.3s ease;
         }
-        .custom-card:hover .event-cover {
+
+        .bento-item {
+            height: 200px;
+            border-radius: 8px;
+            overflow: hidden;
+
+            align-items: center;
+            box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+            font-weight: bold;
+            color: white;
+        }
+        .event-cover:hover {
             transform: scale(1.05);
+        }
+        .bento-tall {
+            height: 410px;
         }
     </style>
 </head>
@@ -95,40 +90,156 @@
     </div>
     <div class="container my-5">
         <div class="mb-4 d-flex justify-content-between">
-            <h4><span class="text-primary-emphasis">Explore ongoing Events:</span></h4>
+            <h4><span class="text-primary-emphasis">Trending Now:</span></h4>
             <a class="text-black" href="/explore">Explore All</a>
         </div>
-        <div class="row" th:each="eventType : ${eventTypes}">
-            <div class="col-md-12 mb-3 d-flex align-items-center">
-                <img th:if="${eventType.icon}" th:src="@{/images/{icon}(icon=${eventType.icon})}" class="event-type-icon me-2" alt="Event type icon">
-                <span th:text="${eventType.typeName} +':'" class="event-type-text">Event Type</span>
-            </div>
-            <div class="col-lg-4 col-md-6 col-sm-12 mb-4" th:each="event : ${eventType.events}">
-                <div class="custom-card">
-                    <div class="position-relative h-100">
-                        <a th:href="@{/event/${event.id}}">
-                            <img th:if="${event.coverPhoto}" th:src="@{/images/{coverPhoto}(coverPhoto=${event.coverPhoto})}" class="img-fluid event-cover" alt="Event Cover">
-                            <span th:unless="${event.coverPhoto}" class="invalid-feedback">No cover Image</span>
-                            <div class="gradient-bg gap-1 d-flex justify-content-between">
-                                <div class="align-items-end">
-                                    <h6 th:text="${event.title}">Title</h6>
-                                    <svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20px" height="20px">
-                                        <g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-                                            <path d="M11.795 21H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4" />
-                                            <path d="M14 18a4 4 0 1 0 8 0a4 4 0 1 0-8 0m1-15v4M7 3v4m-4 4h16" />
-                                            <path d="M18 16.496V18l1 1" />
-                                        </g>
-                                    </svg>
-                                    <small th:text="${event.startDate} + ' at ' + ${event.startTime}">Event Date and Time</small>
-                                </div>
-                                <div class="text-end align-items-end mt-auto">
-                                    <i></i>
-                                    <strong class="text-md" th:text="${event.getSmallestTicketPrice()} + ' DT'">Event Smallest ticket price</strong> <br/>
-                                    <small>Starting from</small>
-                                </div>
+        <div class="row">
+            <!-- Large item -->
+            <div class="col-md-8" th:if="${events.size() > 0}">
+                <div class="bento-item bento-tall position-relative">
+                    <a th:href="@{/event/${events[0].id}}">
+                        <img th:if="${events[0].coverPhoto}" th:src="@{/images/{coverPhoto}(coverPhoto=${events[0].coverPhoto})}" class="img-fluid event-cover" alt="Event Cover">
+                        <span th:unless="${events[0].coverPhoto}" class="invalid-feedback">No cover Image</span>
+                        <div class="gradient-bg gap-1 d-flex justify-content-between">
+                            <div class="align-items-end">
+                                <h5 th:text="${events[0].title}">Title</h5>
+                                <svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20px" height="20px">
+                                    <g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                        <path d="M11.795 21H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4" />
+                                        <path d="M14 18a4 4 0 1 0 8 0a4 4 0 1 0-8 0m1-15v4M7 3v4m-4 4h16" />
+                                        <path d="M18 16.496V18l1 1" />
+                                    </g>
+                                </svg>
+                                <small th:text="${events[0].startDate} + ' at ' + ${events[0].startTime}">Event Date and Time</small>
                             </div>
-                        </a>
+                            <div class="text-end align-items-end mt-auto">
+                                <i></i>
+                                <h5 class="text-md" th:text="${events[0].getSmallestTicketPrice()} + ' DT'">Event Smallest ticket price</h5> <br/>
+                                <small>Starting from</small>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <!-- Two small items -->
+            <div class="col-md-4">
+                <div class="row g-4">
+                    <div class="col-12" th:if="${events.size() > 1}">
+                        <div class="bento-item position-relative">
+                            <a th:href="@{/event/${events[1].id}}">
+                                <img th:if="${events[1].coverPhoto}" th:src="@{/images/{coverPhoto}(coverPhoto=${events[1].coverPhoto})}" class="img-fluid event-cover" alt="Event Cover">
+                                <span th:unless="${events[1].coverPhoto}" class="invalid-feedback">No cover Image</span>
+                                <div class="gradient-bg gap-1 d-flex justify-content-between">
+                                    <div class="align-items-end">
+                                        <h6 th:text="${events[1].title}">Title</h6>
+                                        <svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20px" height="20px">
+                                            <g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                <path d="M11.795 21H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4" />
+                                                <path d="M14 18a4 4 0 1 0 8 0a4 4 0 1 0-8 0m1-15v4M7 3v4m-4 4h16" />
+                                                <path d="M18 16.496V18l1 1" />
+                                            </g>
+                                        </svg>
+                                        <small th:text="${events[1].startDate} + ' at ' + ${events[1].startTime}">Event Date and Time</small>
+                                    </div>
+                                    <div class="text-end align-items-end mt-auto">
+                                        <i></i>
+                                        <strong class="text-md" th:text="${events[1].getSmallestTicketPrice()} + ' DT'">Event Smallest ticket price</strong> <br/>
+                                        <small>Starting from</small>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
                     </div>
+                    <div class="col-12" th:if="${events.size() > 2}">
+                        <div class="bento-item position-relative">
+                            <a th:href="@{/event/${events[2].id}}">
+                                <img th:if="${events[2].coverPhoto}" th:src="@{/images/{coverPhoto}(coverPhoto=${events[2].coverPhoto})}" class="img-fluid event-cover" alt="Event Cover">
+                                <span th:unless="${events[2].coverPhoto}" class="invalid-feedback">No cover Image</span>
+                                <div class="gradient-bg gap-1 d-flex justify-content-between">
+                                    <div class="align-items-end">
+                                        <h6 th:text="${events[2].title}">Title</h6>
+                                        <svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20px" height="20px">
+                                            <g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                <path d="M11.795 21H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4" />
+                                                <path d="M14 18a4 4 0 1 0 8 0a4 4 0 1 0-8 0m1-15v4M7 3v4m-4 4h16" />
+                                                <path d="M18 16.496V18l1 1" />
+                                            </g>
+                                        </svg>
+                                        <small th:text="${events[2].startDate} + ' at ' + ${events[2].startTime}">Event Date and Time</small>
+                                    </div>
+                                    <div class="text-end align-items-end mt-auto">
+                                        <i></i>
+                                        <strong class="text-md" th:text="${events[2].getSmallestTicketPrice()} + ' DT'">Event Smallest ticket price</strong> <br/>
+                                        <small>Starting from</small>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Medium items -->
+            <div class="col-md-4" th:if="${events.size() > 3}">
+                <div class="bento-item position-relative">
+                    <a th:href="@{/event/${events[3].id}}">
+                        <img th:if="${events[3].coverPhoto}" th:src="@{/images/{coverPhoto}(coverPhoto=${events[3].coverPhoto})}" class="img-fluid event-cover" alt="Event Cover">
+                        <span th:unless="${events[3].coverPhoto}" class="invalid-feedback">No cover Image</span>
+                        <div class="gradient-bg gap-1 d-flex justify-content-between">
+                            <div class="align-items-end">
+                                <h6 th:text="${events[3].title}">Title</h6>
+                                <svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20px" height="20px">
+                                    <g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                        <path d="M11.795 21H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4" />
+                                        <path d="M14 18a4 4 0 1 0 8 0a4 4 0 1 0-8 0m1-15v4M7 3v4m-4 4h16" />
+                                        <path d="M18 16.496V18l1 1" />
+                                    </g>
+                                </svg>
+                                <small th:text="${events[3].startDate} + ' at ' + ${events[1].startTime}">Event Date and Time</small>
+                            </div>
+                            <div class="text-end align-items-end mt-auto">
+                                <i></i>
+                                <strong class="text-md" th:text="${events[3].getSmallestTicketPrice()} + ' DT'">Event Smallest ticket price</strong> <br/>
+                                <small>Starting from</small>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-4" th:if="${events.size() > 4}">
+                <div class="bento-item position-relative">
+                    <a th:href="@{/event/${events[4].id}}">
+                        <img th:if="${events[4].coverPhoto}" th:src="@{/images/{coverPhoto}(coverPhoto=${events[4].coverPhoto})}" class="img-fluid event-cover" alt="Event Cover">
+                        <span th:unless="${events[4].coverPhoto}" class="invalid-feedback">No cover Image</span>
+                        <div class="gradient-bg gap-1 d-flex justify-content-between">
+                            <div class="align-items-end">
+                                <h6 th:text="${events[4].title}">Title</h6>
+                                <svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20px" height="20px">
+                                    <g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                        <path d="M11.795 21H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4" />
+                                        <path d="M14 18a4 4 0 1 0 8 0a4 4 0 1 0-8 0m1-15v4M7 3v4m-4 4h16" />
+                                        <path d="M18 16.496V18l1 1" />
+                                    </g>
+                                </svg>
+                                <small th:text="${events[4].startDate} + ' at ' + ${events[4].startTime}">Event Date and Time</small>
+                            </div>
+                            <div class="text-end align-items-end mt-auto">
+                                <i></i>
+                                <strong class="text-md" th:text="${events[4].getSmallestTicketPrice()} + ' DT'">Event Smallest ticket price</strong> <br/>
+                                <small>Starting from</small>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-4" th:if="${events.size() > 5}">
+                <div class="bento-item position-relative">
+                    <a th:href="@{/event/${events[5].id}}">
+                        <img th:src="@{/images/{coverPhoto}(coverPhoto=${events[5].coverPhoto})}" class="event-cover" alt="Event Cover">
+                        <div class="gradient-bg">
+                            <h5 th:text="${events[5].title}">Event Title</h5>
+                            <p th:text="${events[5].startDate} + ' at ' + ${events[5].startTime}">Event Date & Time</p>
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>

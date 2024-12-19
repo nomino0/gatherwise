@@ -33,4 +33,5 @@ public class Ticket {
     this.quantity = quantity;
     this.event = event;
   }
+
 }
