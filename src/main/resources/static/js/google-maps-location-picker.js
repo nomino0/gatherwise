@@ -1,5 +1,5 @@
 // google-maps-location-picker.js
-const apiKey = 'AIzaSyDwpdbpoSJ2VVW1IIhhQGFvF0PFdjYBliM';
+const apiKey = '';
 
 function loadGoogleMapsApi(callback) {
     const script = document.createElement('script');
