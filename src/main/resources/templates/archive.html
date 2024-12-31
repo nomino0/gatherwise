@@ -110,7 +110,8 @@
                 <img th:if="${eventType.icon}" th:src="@{/images/{icon}(icon=${eventType.icon})}" class="event-type-icon me-2" alt="Event type icon">
                 <span th:text="${eventType.typeName} +':'" class="event-type-text">Event Type</span>
             </div>
-            <div class="col-lg-4 col-md-6 col-sm-12 mb-4" th:each="event : ${eventType.events}">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 col-sm-12 mb-4" th:each="event : ${eventType.events}">
                     <div class="custom-card">
                         <div class="position-relative h-100">
                             <img th:if="${event.coverPhoto}" th:src="@{/images/{coverPhoto}(coverPhoto=${event.coverPhoto})}" class="img-fluid event-cover" alt="Event Cover">
@@ -126,7 +127,7 @@
                                 </div>
                             </div>
                         </div>
-
+                    </div>
                 </div>
             </div>
         </div>

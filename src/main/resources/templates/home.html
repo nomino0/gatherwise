@@ -61,7 +61,6 @@
             height: 200px;
             border-radius: 8px;
             overflow: hidden;
-
             align-items: center;
             box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
             font-weight: bold;
@@ -97,7 +96,7 @@
             <!-- Large item -->
             <div class="col-md-8" th:if="${events.size() > 0}">
                 <div class="bento-item bento-tall position-relative">
-                    <a th:href="@{/event/${events[0].id}}">
+                    <a th:href="@{/explore/{eventId}(eventId=${events[0].id})}">
                         <img th:if="${events[0].coverPhoto}" th:src="@{/images/{coverPhoto}(coverPhoto=${events[0].coverPhoto})}" class="img-fluid event-cover" alt="Event Cover">
                         <span th:unless="${events[0].coverPhoto}" class="invalid-feedback">No cover Image</span>
                         <div class="gradient-bg gap-1 d-flex justify-content-between">
@@ -126,7 +125,7 @@
                 <div class="row g-4">
                     <div class="col-12" th:if="${events.size() > 1}">
                         <div class="bento-item position-relative">
-                            <a th:href="@{/event/${events[1].id}}">
+                            <a th:href="@{/explore/{eventId}(eventId=${events[1].id})}">
                                 <img th:if="${events[1].coverPhoto}" th:src="@{/images/{coverPhoto}(coverPhoto=${events[1].coverPhoto})}" class="img-fluid event-cover" alt="Event Cover">
                                 <span th:unless="${events[1].coverPhoto}" class="invalid-feedback">No cover Image</span>
                                 <div class="gradient-bg gap-1 d-flex justify-content-between">
@@ -152,7 +151,7 @@
                     </div>
                     <div class="col-12" th:if="${events.size() > 2}">
                         <div class="bento-item position-relative">
-                            <a th:href="@{/event/${events[2].id}}">
+                            <a th:href="@{/explore/{eventId}(eventId=${events[2].id})}">
                                 <img th:if="${events[2].coverPhoto}" th:src="@{/images/{coverPhoto}(coverPhoto=${events[2].coverPhoto})}" class="img-fluid event-cover" alt="Event Cover">
                                 <span th:unless="${events[2].coverPhoto}" class="invalid-feedback">No cover Image</span>
                                 <div class="gradient-bg gap-1 d-flex justify-content-between">
@@ -181,7 +180,7 @@
             <!-- Medium items -->
             <div class="col-md-4" th:if="${events.size() > 3}">
                 <div class="bento-item position-relative">
-                    <a th:href="@{/event/${events[3].id}}">
+                    <a th:href="@{/explore/{eventId}(eventId=${events[3].id})}">
                         <img th:if="${events[3].coverPhoto}" th:src="@{/images/{coverPhoto}(coverPhoto=${events[3].coverPhoto})}" class="img-fluid event-cover" alt="Event Cover">
                         <span th:unless="${events[3].coverPhoto}" class="invalid-feedback">No cover Image</span>
                         <div class="gradient-bg gap-1 d-flex justify-content-between">
@@ -194,7 +193,7 @@
                                         <path d="M18 16.496V18l1 1" />
                                     </g>
                                 </svg>
-                                <small th:text="${events[3].startDate} + ' at ' + ${events[1].startTime}">Event Date and Time</small>
+                                <small th:text="${events[3].startDate} + ' at ' + ${events[3].startTime}">Event Date and Time</small>
                             </div>
                             <div class="text-end align-items-end mt-auto">
                                 <i></i>
@@ -207,7 +206,7 @@
             </div>
             <div class="col-md-4" th:if="${events.size() > 4}">
                 <div class="bento-item position-relative">
-                    <a th:href="@{/event/${events[4].id}}">
+                    <a th:href="@{/explore/{eventId}(eventId=${events[4].id})}">
                         <img th:if="${events[4].coverPhoto}" th:src="@{/images/{coverPhoto}(coverPhoto=${events[4].coverPhoto})}" class="img-fluid event-cover" alt="Event Cover">
                         <span th:unless="${events[4].coverPhoto}" class="invalid-feedback">No cover Image</span>
                         <div class="gradient-bg gap-1 d-flex justify-content-between">
@@ -233,7 +232,7 @@
             </div>
             <div class="col-md-4" th:if="${events.size() > 5}">
                 <div class="bento-item position-relative">
-                    <a th:href="@{/event/${events[5].id}}">
+                    <a th:href="@{/explore/{eventId}(eventId=${events[5].id})}">
                         <img th:src="@{/images/{coverPhoto}(coverPhoto=${events[5].coverPhoto})}" class="event-cover" alt="Event Cover">
                         <div class="gradient-bg">
                             <h5 th:text="${events[5].title}">Event Title</h5>

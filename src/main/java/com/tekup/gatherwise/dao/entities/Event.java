@@ -89,12 +89,35 @@ public class Event {
     }
 
     public String getDuration() {
-        long durationInMillis = endDate.getTime() - startDate.getTime();
-        long durationInDays = durationInMillis / (1000 * 60 * 60 * 24);
-        if (durationInDays < 1) {
-            return "Less than a day";
+        long durationInMillis = (endDate.getTime() + endTimeInMillis(endTime)) - (startDate.getTime() + startTimeInMillis(startTime));
+        long durationInMinutes = durationInMillis / (1000 * 60);
+        long durationInHours = durationInMinutes / 60;
+        long durationInDays = durationInHours / 24;
+
+        if (durationInDays > 0) {
+            return durationInDays + " days " + (durationInHours % 24) + " hours " + (durationInMinutes % 60) + " minutes";
+        } else if (durationInHours > 0) {
+            if (durationInMinutes % 60 == 0) {
+                return durationInHours == 1 ? "1 hour" : durationInHours + " hours";
+            } else {
+                return durationInHours + " hours " + (durationInMinutes % 60) + " minutes";
+            }
         } else {
-            return durationInDays + " days";
+            return durationInMinutes + " minutes";
         }
+    }
+
+    private long startTimeInMillis(String time) {
+        String[] parts = time.split(":");
+        int hours = Integer.parseInt(parts[0]);
+        int minutes = Integer.parseInt(parts[1]);
+        return (hours * 60 + minutes) * 60 * 1000;
+    }
+
+    private long endTimeInMillis(String time) {
+        String[] parts = time.split(":");
+        int hours = Integer.parseInt(parts[0]);
+        int minutes = Integer.parseInt(parts[1]);
+        return (hours * 60 + minutes) * 60 * 1000;
     }
 }

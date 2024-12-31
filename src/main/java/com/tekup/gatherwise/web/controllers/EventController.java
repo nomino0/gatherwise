@@ -160,7 +160,7 @@ public class EventController {
 
         for (TicketForm ticketForm : eventForm.getTickets()) {
             Ticket ticket = new Ticket(null, ticketForm.getTicketType(), ticketForm.getDescription(),
-                    ticketForm.getPrice(), ticketForm.getQuantity(), event);
+                    ticketForm.getPrice(), ticketForm.getQuantity(), event, 0);
             this.ticketService.addTicket(ticket);
         }
 

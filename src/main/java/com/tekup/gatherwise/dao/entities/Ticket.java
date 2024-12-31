@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @NoArgsConstructor
 @Getter
 @Setter
@@ -20,18 +19,29 @@ public class Ticket {
   private String description;
   private int price;
   private int quantity;
+  private int soldCount; // Add this field
 
   @ManyToOne(optional = true)
   @JoinColumn(name = "event_id", nullable = true)
   private Event event;
 
-  public Ticket(Long id, String ticketType,String description , int price, int quantity, Event event) {
+  public Ticket(Long id, String ticketType, String description, int price, int quantity, Event event) {
     this.id = id;
     this.ticketType = ticketType;
     this.description = description;
     this.price = price;
     this.quantity = quantity;
     this.event = event;
+    this.soldCount = 0; // Initialize soldCount to 0
   }
 
+  public Ticket(Long id, String ticketType, String description, int price, int quantity, Event event, int soldCount) {
+    this.id = id;
+    this.ticketType = ticketType;
+    this.description = description;
+    this.price = price;
+    this.quantity = quantity;
+    this.event = event;
+    this.soldCount = soldCount;
+  }
 }

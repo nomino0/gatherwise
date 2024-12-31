@@ -119,7 +119,6 @@ public class GatherWiseController {
         return "explore";
     }
 
-    //for archive page
     @GetMapping("/explore/archive")
     public String getArchivePage(@RequestParam(value = "query", required = false) String query,
                                  @RequestParam(value = "category", required = false) Long categoryId,
@@ -131,10 +130,15 @@ public class GatherWiseController {
                 .collect(Collectors.toList());
 
         List<EventType> eventTypes = eventTypeService.getAllEventTypes().stream()
-                .filter(eventType -> eventType.getEvents().stream()
-                        .anyMatch(event -> event.getIsArchived() && event.getIsPublic()))
+                .map(eventType -> {
+                    List<Event> filteredEvents = eventType.getEvents().stream()
+                            .filter(event -> event.getIsArchived() && event.getIsPublic())
+                            .collect(Collectors.toList());
+                    eventType.setEvents(filteredEvents);
+                    return eventType;
+                })
+                .filter(eventType -> !eventType.getEvents().isEmpty())
                 .collect(Collectors.toList());
-
 
         model.addAttribute("archivedEvents", archivedEvents);
         model.addAttribute("eventTypes", eventTypes);
@@ -160,7 +164,6 @@ public class GatherWiseController {
     }
 
 
-
     @ModelAttribute
     public void addAttributes(Model model) {
         List<Event> archivedEvents = eventService.getAllEvents().stream()
@@ -182,16 +185,15 @@ public class GatherWiseController {
     }
 
 
-
     @Autowired
     private TicketService ticketService;
 
     @GetMapping("/explore/{id}")
-    public String getEventDetails(@PathVariable Long id, Model model) {
+    public String showEventDetails(@PathVariable Long id, Model model) {
         // Fetch event details
         Event event = eventService.getEventById(id);
         if (event == null) {
-            return "error"; // Return an error page if the event is not found
+            return "errors"; // Return an error page if the event is not found
         }
 
         // Fetch ticket details
@@ -206,4 +208,9 @@ public class GatherWiseController {
 
         return "event-details";
     }
+
+
+
+
+
 }

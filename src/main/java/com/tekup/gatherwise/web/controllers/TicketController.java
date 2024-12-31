@@ -111,10 +111,10 @@ public class TicketController {
         model.addAttribute("isPublic", isPublic);
         model.addAttribute("isArchived", isArchived);
         model.addAttribute("search", search);
+        model.addAttribute("ticketService", ticketService); // Add this line
 
         return "ticket/event-list";
     }
-
 
 
 

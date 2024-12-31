@@ -10,6 +10,6 @@ public class AdminController {
 
     @GetMapping("/dashboard")
     public String adminDashboard() {
-        return "admin/dashboard"; // Name of the HTML/Thymeleaf file for the admin dashboard
+        return "admin/dashboard";
     }
 }

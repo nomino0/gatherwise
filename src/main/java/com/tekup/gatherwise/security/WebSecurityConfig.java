@@ -26,7 +26,7 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/home", "/faq", "/error", "/about", "/explore/**" , "/webjars/**", "/images/**")
+                        .requestMatchers("/",  "/home", "/faq", "/error", "/about", "/explore/**" ,"/checkout/**", "/webjars/**", "/images/**")
                         .permitAll()
                         .anyRequest().authenticated() // All endpoints require authentication
                 )
